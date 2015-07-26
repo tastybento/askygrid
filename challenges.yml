@@ -7,7 +7,6 @@
 # inventory - means the player must have the items on them
 # island - means the items have to be on the island and within 10 blocks of the player
 #          entities are also supported, e.g., COW.
-# level - means the island level has to be equal or over this amount
 # Challenges can be repeatable only if they are inventory challenges
 # permissions can be given as a reward
 #
@@ -257,24 +256,6 @@ challenges:
       repeatExpReward: 10
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
       maxtimes: 100
-    builder:
-      friendlyname: 'Builder'
-      description: 'Reach island level 10 (/island level).'
-      icon: WOOD
-      level: 'Novice'
-      type: level
-      requiredItems: 10
-      takeItems: false
-      itemReward: 'IRON_PICKAXE:1 DIRT:5 SPONGE:1'
-      rewardText: '1 iron pickaxe, 5 dirt and a Sponge'
-      moneyReward: 50
-      expReward: 50
-      permissionReward: ''
-      repeatable: false
-      repeatItemReward: ''
-      repeatRewardText: ''
-      repeatMoneyReward: 0
-      repeatExpReward: 0
     grinder:
       description: 'Kill monsters and collect 64 rotten flesh, 32 skeleton bones, 32 string, 32 arrows, 16 gunpowder, 5 spider eyes'
       icon: BONE
@@ -373,24 +354,6 @@ challenges:
       repeatExpReward: 15
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
       maxtimes: 100
-    craftsman:
-      friendlyname: 'Craftsman'
-      description: 'Reach island level 75 (/island level).'
-      icon: IRON_BLOCK
-      level: 'Competent'
-      type: level
-      requiredItems: 75
-      takeItems: false
-      itemReward: 'OBSIDIAN:10'
-      rewardText: '10 obsidian blocks'
-      moneyReward: 50
-      expReward: 50
-      permissionReward: ''
-      repeatable: false
-      repeatItemReward: ''
-      repeatRewardText: ''
-      repeatMoneyReward: 0
-      repeatExpReward: 0
     homestead:
       friendlyname: 'Homestead'
       description: 'Build a house that contains at least 1 wooden door, bed, bookshelf, crafting table, furnace, glass-block window, and torch.'
@@ -507,24 +470,6 @@ challenges:
       repeatExpReward: 20
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
       maxtimes: 100
-    mason:
-      friendlyname: 'Mason'
-      description: 'Reach island level 150 (/island level).'
-      icon: GOLD_BLOCK
-      level: 'Expert'
-      type: level
-      requiredItems: 150
-      takeItems: false
-      itemReward: 'DIAMOND:1 DIRT:20 GOLD_BLOCK:2'
-      rewardText: '1 diamond, 20 dirt, and 2 gold blocks'
-      moneyReward: 150
-      expReward: 150
-      permissionReward: ''
-      repeatable: false
-      repeatItemReward: ''
-      repeatRewardText: ''
-      repeatMoneyReward: 0
-      repeatExpReward: 0
     shepherd:
       friendlyname: 'Shepherd'
       description: 'Collect 5 of every color of wool'
@@ -701,7 +646,7 @@ challenges:
       friendlyname: "It's a party"
       description: 'Have a party! Invite 4 friends.'
       icon: PUMPKIN_PIE
-      level: 'Advanced'
+      level: 'Elite'
       type: island
       requiredItems: 'PLAYER:5'
       takeItems: false
@@ -719,7 +664,7 @@ challenges:
       friendlyname: "It's a Monster Party"
       description: 'Have a party - all monsters invited! Get close to a Skeleton, Zombie, Spider, Creeper and Enderman all at the same time.'
       icon: SKULL_ITEM
-      level: 'Advanced'
+      level: 'Elite'
       type: island
       requiredItems: 'SKELETON:1 ZOMBIE:1 SPIDER:1 CREEPER:1 ENDERMAN:1'
       takeItems: false
@@ -733,21 +678,4 @@ challenges:
       repeatRewardText: ''
       repeatMoneyReward: 0
       repeatExpReward: 0
-    acidduke:
-      friendlyname: 'Arch Duke'
-      description: 'Achieve an island level of 1000'
-      icon: DIAMOND_BLOCK
-      level: 'Elite'
-      type: level
-      requiredItems: 1000
-      takeItems: false
-      itemReward: 'DIAMOND:1'
-      rewardText: '1 diamond'
-      moneyReward: 250
-      expReward: 250
-      permissionReward: ''
-      repeatable: false
-      repeatItemReward: ''
-      repeatRewardText: ''
-      repeatMoneyReward: 0
-      repeatExpReward: 0
+

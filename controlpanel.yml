@@ -9,51 +9,21 @@ default:
   buttons:
     0:
       material: GRASS
-      description: 'Go to your island'
+      description: 'Go home'
       command: '[island] go'
       nextsection: ''
     1:
-      material: LAVA_BUCKET
-      description: 'Open the minishop'
-      command: '[island] ms'
-      nextsection: ''
-    2:
-      material: SKULL_ITEM
-      description: 'List team members'
-      command: '[island] team'
-      nextsection:
-    3:
       material: BED
       description: 'Set your home here'
       command: '[island] sethome'
       nextsection:
-    4:
-      material: ACACIA_STAIRS
-      description: 'Island level'
-      command: '[island] level'
-      nextsection:
-    5:
-      material: BOOK
-      description: 'List the Top 10 islands'
-      command: '[island] top'
-      nextsection:
-    6:
+    3:
       material: SIGN
       description: 'List warps available'
       command: '[island] warps'
       nextsection:
-    7:
-      material: BEDROCK
-      description: 'Go to world spawn'
-      command: '[island] spawn'
-      nextsection:
-    8:
-      material: SAPLING
-      description: 'Change biome'
-      command: '[island] biomes'
-      nextsection: ''
-    9:
+    4:
       material: ENCHANTMENT_TABLE
       description: 'Challenges'
-      command: 'asc'
+      command: 'asgc'
       nextsection: ''
