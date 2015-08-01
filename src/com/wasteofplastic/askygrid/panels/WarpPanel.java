@@ -93,7 +93,7 @@ public class WarpPanel implements Listener {
 		playerSkull.setItemMeta(meta);
 		// Add item to the panel
 		//plugin.getLogger().info("DEBUG: adding item to panel number = " + panelNumber + " slot = " + slot);
-		CPItem newButton = new CPItem(playerSkull, Settings.ISLANDCOMMAND + " warp " + playerName);
+		CPItem newButton = new CPItem(plugin, playerSkull, Settings.ISLANDCOMMAND + " warp " + playerName);
 		warpPanel.get(panelNumber).setItem(slot++, newButton.getItem());
 	    } else {
 		// Just make a blank space
@@ -109,16 +109,16 @@ public class WarpPanel implements Listener {
 	    if (slot == panelSize-2) {
 		// Add navigation buttons
 		if (panelNumber > 0) {
-		    warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
+		    warpPanel.get(panelNumber).setItem(slot++, new CPItem(plugin, Material.SIGN, plugin.myLocale().warpsPrevious, "warps " + (panelNumber-1)).getItem());
 		}
-		warpPanel.get(panelNumber).setItem(slot, new CPItem(Material.SIGN,plugin.myLocale().warpsNext,"warps " + (panelNumber+1),"").getItem());
+		warpPanel.get(panelNumber).setItem(slot, new CPItem(plugin, Material.SIGN,plugin.myLocale().warpsNext,"warps " + (panelNumber+1)).getItem());
 		// Move onto the next panel
 		panelNumber++;
 		slot = 0;
 	    } 
 	}
 	if (remainder != 0 && panelNumber > 0) {
-	    warpPanel.get(panelNumber).setItem(slot++, new CPItem(Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1),"").getItem());
+	    warpPanel.get(panelNumber).setItem(slot++, new CPItem(plugin, Material.SIGN,plugin.myLocale().warpsPrevious,"warps " + (panelNumber-1)).getItem());
 	}
     }
 

@@ -2,57 +2,90 @@
 # Config for ASkyGid
 ##############################################################################
 
-island:
-   distance: 10000
-
-   protectionRange: 100
-
-   # PVP is allowed or not.
-   allowPvP: false
-   allowNetherPvP: false
-   # Allow players to throw enderpearls and teleport
-   allowenderpearls: false
-   # Allow fire spread 
-   allowfirespread: false
-   # Allow chests to be blown up by creepers or TNT
-   allowchestdamage: false
-
-# General Settings
-general:
-   # Check for updates - this will tell Ops and the console if there is a new
-   # version available. It contacts dev.bukkit.org to request the latest version
-   # info. It does not download the latest version or change any files
-   checkupdates: true
-
-   # Grid height - in multiples of 16
-   islandlevel: 128
+general:   
+   # Grid height - max is 256
+   gridheight: 128
+   
+   # Spawn height - height where players will spawn. Can be less than the grid height
+   spawnheight: 128
 
    # Name of the world - if it does not exist then it will be generated
    worldName: ASkyGrid
-
-   # Use the control panel as the default display for /island
-   # /island will always create an island if one does not exist
-   # If the control panel is not used, then /island will teleport the player home
-   usecontrolpanel: false
-
-   # Create Nether - if this is false, the nether world will not be made and access to
+   # Create a Grid Nether - if this is false, the nether grid world will not be made
    createnether: true
 
+   # distance around 0,0 where players can spawn
+   # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000
+   distance: 1000
 
-   # Commands to execute when a player starts a new island for the first time - NOT a reset
+   # Protection radius given when planting a Welcome Sign
+   # Players can control what happens within their protected space
+   # Value of 20 means a 21x21 square at all heights with the warp block in the center
+   # If a player removes their sign, the protection is dropped.
+   # Players can trust other players with their space
+   protectionRange: 20
+
+   ### Settings for the whole world
+   ### Players cannot customize these settings
+   # Allow lava or water flow into or out of a district
+   allowflowin: true
+   allowflowout: true
+   # Allow chests to be blown up by creepers or TNT
+   allowchestdamage: true
+   # Allow TNT damage
+   allowTNTdamage: true
+   #[true/false] PVP is allowed or denied.
+   allowPvP: true
+   # Allow players to throw enderpearls and teleport
+   allowenderpearls: true
+   
+   ### Default in-claim settings. Owners will be able to customize the settings
+   ### using the control panel
+   # Other players can break blocks or not or generally damage things
+   allowbreakblocks: false
+   # Other players can place blocks
+   allowplaceblocks: false
+   # Allow players to be able to sleep in beds not on their island
+   allowbeduse: false
+   # Allow players to use buckets, either fill or dump them
+   allowbucketuse: false
+   # Allow players to shear sheep
+   allowshearing: false
+   # Allow players to use doors or trapdoors. If a door is operated by a button or redstone, this does not count
+   allowdooruse: false
+   # Allow players to use levers or buttons
+   allowleverbuttonuse: false
+   # Allow players to trample crops
+   allowcroptrample: false
+   # Allow players to access chests of any kind, droppers, dispensers and hoppers
+   allowchestaccess: false
+   # Allow players to access furnaces
+   allowfurnaceuse: false
+   # Allow players to adjust diodes or comparators
+   allowredstone: false
+   # Allow players to use jukeboxes, eject discs and hit note blocks
+   allowmusic: false
+   # Allow players to use crafting benches
+   allowcrafting: true
+   # Allow players to use cauldrons and brewing stands
+   allowbrewing: false
+   # Allow gates to be used
+   allowgateuse: false
+   # Allow non-monster mobs to be hurt
+   allowhurtmobs: false
+   
+   # Commands to execute when a player starts for the first time
+   # Commands will be run as console. Use [player] to substitute the player's name
    startcommands:
-   #- some other command
+   - give [player] bread 1
    
-   # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
-   # players return to their island if the island has been overrun by monsters
-   # Con is that it kills any mob grinders 
-   # Remove mobs when logging in
-   loginremovemobs: true
+   # Remove mobs - this kills all monsters in the vicinity when the player logs in. 
+   loginremovemobs: false
 
-   # Remove mobs when /island.
-   islandremovemobs: false
+   # Remove mobs when /asg.
+   gridremovemobs: false
    
-   # Mob white list - these mobs will NOT be removed when logging in or doing /island
+   # Mob white list - these mobs will NOT be removed when logging in or doing /asg
    # Options are: Blaze, Cave_Spider, Creeper, Enderman, Endermite, Giant, Guardian,
    # Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie
    mobwhitelist:
@@ -84,24 +117,14 @@ general:
    useeconomy: true
 
    # Reset Money - if this is true, will reset the player's money to
-   # the starting money (see below) when they start an island or reset
+   # the starting money (see below) when they start.
    # Recommendation is that this is set to true, but if you run multi-worlds
    # make sure your economy handles multi-worlds too.
    resetmoney: false
 
    # Starting money - this is how much money new players will have as their
-   # balance at the start of an island. 
+   # balance at the start. 
    startingmoney: 10.00
-
-   # Reset Challenges - if this is true, player's challenges will reset when they
-   # reset an island
-   resetchallenges: true
-
-   # Reset inventory - if true, the player's inventory will be cleared when they start
-   # or restart and island. Default is true.
-   # Note: if you have MultiInv running or a similar inventory control plugin, that
-   # plugin may still reset the inventory when the world changes.
-   resetinventory: true
 
    # Reset Ender Chest - if true, the player's Ender Chest will be cleared when they
    # start or restart their island. Default is false.
@@ -143,7 +166,7 @@ general:
    maxhomes: 1
 
    # Have player's respawn on their island if they die
-   respawnonisland: false
+   respawnonisland: true
 
    # Warp panel - GUI for welcome warp signs. If set to false, old-style
    # text will be used

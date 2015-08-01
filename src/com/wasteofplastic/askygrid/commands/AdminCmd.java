@@ -1,18 +1,18 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+ * This file is part of ASkyGrid.
  *
- *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     ASkyGrid is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
- *     ASkyBlock is distributed in the hope that it will be useful,
+ *     ASkyGrid is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
 package com.wasteofplastic.askygrid.commands;
@@ -40,7 +40,6 @@ import com.wasteofplastic.askygrid.ASkyGrid;
 import com.wasteofplastic.askygrid.GridManager;
 import com.wasteofplastic.askygrid.SafeSpotTeleport;
 import com.wasteofplastic.askygrid.Settings;
-import com.wasteofplastic.askygrid.panels.ControlPanel;
 import com.wasteofplastic.askygrid.util.Util;
 import com.wasteofplastic.askygrid.util.VaultHelper;
 
@@ -52,8 +51,8 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
 public class AdminCmd implements CommandExecutor, TabCompleter {
     private ASkyGrid plugin;
 
-    public AdminCmd(ASkyGrid aSkyBlock) {
-	this.plugin = aSkyBlock;
+    public AdminCmd(ASkyGrid plugin) {
+	this.plugin = plugin;
     }
 
     private void help(CommandSender sender, String label) {
@@ -152,12 +151,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		plugin.reloadConfig();
 		plugin.loadPluginConfig();
 		plugin.getChallenges().reloadChallengeConfig();
-		ControlPanel.loadControlPanel();
-		if (Settings.updateCheck) {
-		    plugin.checkUpdates();
-		} else {
-		    plugin.setUpdateCheck(null);
-		}
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().reloadconfigReloaded);
 		return true;
 	    } else {
@@ -229,7 +222,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		return true;
 	    } else if (split[0].equalsIgnoreCase("sethome")) { 
 		if (!(sender instanceof Player)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().adminLockerrorInGame);
+		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUseInGame);
 		    return true;
 		}
 		player = (Player)sender;
@@ -261,7 +254,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorUnknownPlayer);
 		    return true;
 		} else {
-		    Location warpSpot = plugin.getPlayers().getHomeLocation(targetUUID).toVector().toLocation(ASkyGrid.getIslandWorld());
+		    Location warpSpot = plugin.getPlayers().getHomeLocation(targetUUID).toVector().toLocation(ASkyGrid.getGridWorld());
 		    String failureMessage = ChatColor.RED + plugin.myLocale(player.getUniqueId()).adminTpManualWarp.replace("[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
 			    + warpSpot.getBlockZ());
 		    new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
@@ -277,7 +270,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    // This now deletes the player and cleans them up even if
 		    // they don't have an island
 		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", split[1]));
-		    // If they are online and in ASkyBlock then delete their
+		    // If they are online and in ASkyGrid then delete their
 		    // stuff too
 		    Player target = plugin.getServer().getPlayer(playerUUID);
 		    if (target != null) {
@@ -378,14 +371,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    sender.sendMessage(ChatColor.GOLD + plugin.myLocale().adminInfoLastLogin + ": " + d.toString());
 	} catch (Exception e) {
 	}
-	Location islandLoc = null;
-	sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().errorNoTeam);
-	islandLoc = plugin.getPlayers().getHomeLocation(playerUUID);
-	if (islandLoc != null) {
-	    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminInfoislandLocation + ":" + ChatColor.WHITE + " (" + islandLoc.getBlockX() + ","
-		    + islandLoc.getBlockY() + "," + islandLoc.getBlockZ() + ")");
-	} else {
-	    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorNoIslandOther);
+	Location homeLoc = null;
+	homeLoc = plugin.getPlayers().getHomeLocation(playerUUID);
+	if (homeLoc != null) {
+	    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().adminInfoHomeLocation + ":" + ChatColor.WHITE + " (" + homeLoc.getBlockX() + ","
+		    + homeLoc.getBlockY() + "," + homeLoc.getBlockZ() + ")");
 	}
     }
 

@@ -1,18 +1,18 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+ * This file is part of ASkyGrid.
  *
- *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     ASkyGrid is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
- *     ASkyBlock is distributed in the hope that it will be useful,
+ *     ASkyGrid is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package com.wasteofplastic.askygrid.commands;
 
@@ -44,11 +44,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import com.wasteofplastic.askygrid.ASkyGrid;
+import com.wasteofplastic.askygrid.ClaimRegion;
 import com.wasteofplastic.askygrid.GridManager;
 import com.wasteofplastic.askygrid.Settings;
 import com.wasteofplastic.askygrid.listeners.PlayerEvents;
-import com.wasteofplastic.askygrid.panels.ControlPanel;
-import com.wasteofplastic.askygrid.panels.SettingsPanel;
 import com.wasteofplastic.askygrid.util.Util;
 import com.wasteofplastic.askygrid.util.VaultHelper;
 
@@ -58,12 +57,12 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
     /**
      * Constructor
      * 
-     * @param aSkyBlock
+     * @param plugin
      * @param players
      */
-    public SkyGridCmd(ASkyGrid aSkyBlock) {
+    public SkyGridCmd(ASkyGrid plugin) {
 	// Plugin instance
-	this.plugin = aSkyBlock;
+	this.plugin = plugin;
     }
 
     /**
@@ -73,11 +72,11 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
     public void newIsland(final Player player) {
 	//long time = System.nanoTime();
 	final UUID playerUUID = player.getUniqueId();
-	plugin.getLogger().info("DEBUG: finding spawn location");
+	Util.logger(2,"DEBUG: finding spawn location");
 	Random random = new Random();
-	Location next = new Location(ASkyGrid.getIslandWorld(), (random.nextInt(Settings.islandDistance*2) - Settings.islandDistance)
-		,Settings.island_level + 2, (random.nextInt(Settings.islandDistance*2) - Settings.islandDistance));
-	plugin.getLogger().info("DEBUG: found " + next);
+	Location next = new Location(ASkyGrid.getGridWorld(), (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance)
+		,Settings.spawnHeight, (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance));
+	Util.logger(2,"DEBUG: found " + next);
 	// Clear any old home locations (they should be clear, but just in case)
 	plugin.getPlayers().clearHomeLocations(playerUUID);
 	// Set the player's island location to this new spot
@@ -117,7 +116,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	// Done - fire event
 	//final IslandNewEvent event = new IslandNewEvent(player,schematic, myIsland);
 	//plugin.getServer().getPluginManager().callEvent(event);
-	//plugin.getLogger().info("DEBUG: Done! " + (System.nanoTime()- time) * 0.000001);
+	//Util.logger(2,"DEBUG: Done! " + (System.nanoTime()- time) * 0.000001);
     }
 
     private void resetMoney(Player player) {
@@ -126,29 +125,29 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	}
 	// Set player's balance in acid island to the starting balance
 	try {
-	    // plugin.getLogger().info("DEBUG: " + player.getName() + " " +
+	    // Util.logger(2,"DEBUG: " + player.getName() + " " +
 	    // Settings.general_worldName);
 	    if (VaultHelper.econ == null) {
 		// plugin.getLogger().warning("DEBUG: econ is null!");
 		VaultHelper.setupEconomy();
 	    }
 	    Double playerBalance = VaultHelper.econ.getBalance(player, Settings.worldName);
-	    // plugin.getLogger().info("DEBUG: playerbalance = " +
+	    // Util.logger(2,"DEBUG: playerbalance = " +
 	    // playerBalance);
 	    // Round the balance to 2 decimal places and slightly down to
 	    // avoid issues when withdrawing the amount later
 	    BigDecimal bd = new BigDecimal(playerBalance);
 	    bd = bd.setScale(2, RoundingMode.HALF_DOWN);
 	    playerBalance = bd.doubleValue();
-	    // plugin.getLogger().info("DEBUG: playerbalance after rounding = "
+	    // Util.logger(2,"DEBUG: playerbalance after rounding = "
 	    // + playerBalance);
 	    if (playerBalance != Settings.startingMoney) {
 		if (playerBalance > Settings.startingMoney) {
 		    Double difference = playerBalance - Settings.startingMoney;
 		    EconomyResponse response = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, difference);
-		    // plugin.getLogger().info("DEBUG: withdrawn");
+		    // Util.logger(2,"DEBUG: withdrawn");
 		    if (response.transactionSuccess()) {
-			plugin.getLogger().info(
+			Util.logger(2,
 				"FYI:" + player.getName() + " had " + VaultHelper.econ.format(playerBalance) + " when they typed /island and it was set to "
 					+ Settings.startingMoney);
 		    } else {
@@ -160,7 +159,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		    Double difference = Settings.startingMoney - playerBalance;
 		    EconomyResponse response = VaultHelper.econ.depositPlayer(player, Settings.worldName, difference);
 		    if (response.transactionSuccess()) {
-			plugin.getLogger().info(
+			Util.logger(2,
 				"FYI:" + player.getName() + " had " + VaultHelper.econ.format(playerBalance) + " when they typed /island and it was set to "
 					+ Settings.startingMoney);
 		    } else {
@@ -208,7 +207,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	final Player player = (Player) sender;
 	// Basic permissions check to even use /island
 	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.create")) {
-	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).islanderrorYouDoNotHavePermission);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorYouDoNotHavePermission);
 	    return true;
 	}
 	/*
@@ -223,26 +222,22 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	    // New island
 	    if (plugin.getPlayers().getHomeLocation(playerUUID) == null) {
 		// Create new island for player
-		player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).islandnew);
+		player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).newPlayer);
 		newIsland(player);
-		if (Settings.islandRemoveMobs) {
+		if (Settings.removeMobs) {
 		    plugin.getGrid().removeMobs(player.getLocation());
 		}
 		return true;
 	    } else {
-		if (Settings.useControlPanel) {
-		    player.performCommand(Settings.ISLANDCOMMAND + " cp");
-		} else {
-		    if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || Settings.allowTeleportWhenFalling
-			    || !PlayerEvents.isFalling(playerUUID) || player.isOp()) {
-			// Teleport home
-			plugin.getGrid().homeTeleport(player);
-			if (Settings.islandRemoveMobs) {
-			    plugin.getGrid().removeMobs(player.getLocation());
-			}
-		    } else {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
+		if (!player.getWorld().getName().equalsIgnoreCase(Settings.worldName) || Settings.allowTeleportWhenFalling
+			|| !PlayerEvents.isFalling(playerUUID) || player.isOp()) {
+		    // Teleport home
+		    plugin.getGrid().homeTeleport(player);
+		    if (Settings.removeMobs) {
+			plugin.getGrid().removeMobs(player.getLocation());
 		    }
+		} else {
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
 		}
 		return true;
 	    }
@@ -251,6 +246,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.lang")) {
 		    player.sendMessage("/" + label + " lang <locale>");
 		    player.sendMessage("English");
+		    /*
 		    player.sendMessage("Français");
 		    player.sendMessage("Deutsch");
 		    player.sendMessage("Español");
@@ -262,27 +258,20 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		    player.sendMessage("Čeština");
 		    player.sendMessage("Slovenčina");
 		    player.sendMessage("繁體中文 / TraditionalChinese");
+		     */
 		} else {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoPermission);
-		}
-		return true;
-	    } else if (split[0].equalsIgnoreCase("settings")) {
-		// Show what the plugin settings are
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.settings")) {
-		    player.openInventory(SettingsPanel.islandGuardPanel());
-		} else {
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 		}
 		return true;
 	    } else if (split[0].equalsIgnoreCase("go")) {
 		if (plugin.getPlayers().getHomeLocation(playerUUID) == null) {
 		    // Player has no island
-		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).errorNoIsland);
+		    player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).newPlayer);
 		    return true;
 		}
 		// Teleport home
 		plugin.getGrid().homeTeleport(player);
-		if (Settings.islandRemoveMobs) {
+		if (Settings.removeMobs) {
 		    plugin.getGrid().removeMobs(player.getLocation());
 		}
 		return true;
@@ -301,23 +290,23 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.GOLD + "General Public License along with this plugin.");
 		player.sendMessage(ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
 		player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
-		player.sendMessage(ChatColor.GOLD + "(c) 2014 - 2015 by tastybento");
+		player.sendMessage(ChatColor.GOLD + "(c) 2015 by tastybento");
 		return true;
-		// Spawn enderman
-		// Enderman enderman = (Enderman)
-		// player.getWorld().spawnEntity(player.getLocation().add(new
-		// Vector(5,0,5)), EntityType.ENDERMAN);
-		// enderman.setCustomName("TastyBento's Ghost");
-		// enderman.setCarriedMaterial(new
-		// MaterialData(Material.GRASS));
 	    }
 
 	    if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
-		// if
-		// (player.getWorld().getName().equalsIgnoreCase(Settings.worldName))
-		// {
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.controlpanel")) {
-		    player.openInventory(ControlPanel.controlPanel.get(ControlPanel.getDefaultPanelName()));
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
+		    // Check if a player is in a warp zone
+		    ClaimRegion cr = plugin.getGrid().getClaimRegionAt(player.getLocation());
+		    if (cr == null) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).warpserrorNoPlace);
+		    } else {
+			if (player.isOp() || cr.getOwner().equals(playerUUID) || cr.getOwnerTrustedUUID().contains(playerUUID)) {
+			    player.openInventory(plugin.getClaimsPanel().controlPanel(player));
+			} else {
+			    player.openInventory(plugin.getClaimsPanel().infoPanel(player));
+			}
+		    }
 		    return true;
 		}
 		// }
@@ -366,8 +355,8 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	    } else if (split[0].equalsIgnoreCase("sethome")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.sethome")) {
 		    // Check world
-		    if (!player.getWorld().equals(ASkyGrid.getIslandWorld())) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+		    if (!player.getWorld().equals(ASkyGrid.getGridWorld())) {
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 			return true;
 		    }
 		    plugin.getGrid().homeSet(player);
@@ -376,11 +365,8 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		return false;
 	    } else if (split[0].equalsIgnoreCase("help")) {
 		player.sendMessage(ChatColor.GREEN + plugin.getName() + " " + plugin.getDescription().getVersion() + " help:");
-		if (Settings.useControlPanel) {
-		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + ": " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
-		} else {
-		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + ": " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpIsland);
-		}
+
+		player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + ": " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).help);
 		// Dynamic home sizes with permissions
 		int maxHomes = Settings.maxHomes;
 		for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
@@ -397,14 +383,14 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		} else {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
 		}
-	if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.controlpanel")) {
-		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpControlPanel);
+		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
+		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).helpControlPanel);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.sethome")) {
 		    if (maxHomes > 1) {
-			player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSetHome);
+			player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).helpSetHome);
 		    } else {
-			player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpSetHome);
+			player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " sethome: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).helpSetHome);
 		    }
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
@@ -505,14 +491,14 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		if (split[0].equalsIgnoreCase("go")) {
 		    if (plugin.getPlayers().getHomeLocation(playerUUID) == null) {
 			// Player has no island
-			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoIsland);
+			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).newPlayer);
 			return true;
 		    }
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.sethome")) {
 			int number = 1;
 			try {
 			    number = Integer.valueOf(split[1]);
-			    //plugin.getLogger().info("DEBUG: number = " + number);
+			    //Util.logger(2,"DEBUG: number = " + number);
 			    if (number < 1) {
 				plugin.getGrid().homeTeleport(player,1);
 			    } else {
@@ -542,7 +528,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 			    // Teleport home
 			    plugin.getGrid().homeTeleport(player,1);
 			}
-			if (Settings.islandRemoveMobs) {
+			if (Settings.removeMobs) {
 			    plugin.getGrid().removeMobs(player.getLocation());
 			}
 		    } else {
@@ -551,8 +537,8 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		    return true;
 		} else if (split[0].equalsIgnoreCase("sethome")) {
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.sethome")) {
-			if (!player.getWorld().equals(ASkyGrid.getIslandWorld())) {
-			    // plugin.getLogger().info("DEBUG: player has no island in grid");
+			if (!player.getWorld().equals(ASkyGrid.getGridWorld())) {
+			    // Util.logger(2,"DEBUG: player has no island in grid");
 			    // Player has no island in the grid
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 			    return true;
@@ -736,11 +722,9 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		options.add("go");
 	    }
 	    options.add("about"); //No permission needed. :-) Indeed.
-	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.controlpanel")) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
 		options.add("controlpanel");
 		options.add("cp");
-	    }
-	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
 		options.add("warp");
 		options.add("warps");
 	    }
@@ -756,6 +740,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.lang")) {
 		if (args[0].equalsIgnoreCase("lang")) {
 		    options.add("English");
+		    /*
 		    options.add("Français");
 		    options.add("Deutsch");
 		    options.add("Español");
@@ -767,7 +752,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		    options.add("中国");
 		    options.add("Chinese");
 		    options.add("Čeština");
-		    options.add("Slovenčina");
+		    options.add("Slovenčina");*/
 		}
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.sethome")) {

@@ -110,7 +110,7 @@ public class Update {
 	    }
 
 	    // Add the user-agent to identify the program
-	    conn.addRequestProperty("User-Agent", "ASkyBlockAcidIsland Update Checker");
+	    conn.addRequestProperty("User-Agent", "ASkyGridAcidIsland Update Checker");
 
 	    // Read the response of the query
 	    // The response will be in a JSON format, so only reading one line

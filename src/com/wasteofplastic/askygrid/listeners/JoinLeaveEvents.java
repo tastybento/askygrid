@@ -1,18 +1,18 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+ * This file is part of ASkyGrid.
  *
- *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     ASkyGrid is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
- *     ASkyBlock is distributed in the hope that it will be useful,
+ *     ASkyGrid is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package com.wasteofplastic.askygrid.listeners;
 
@@ -38,8 +38,8 @@ public class JoinLeaveEvents implements Listener {
     private ASkyGrid plugin;
     private PlayerCache players;
 
-    public JoinLeaveEvents(ASkyGrid aSkyBlock) {
-	this.plugin = aSkyBlock;
+    public JoinLeaveEvents(ASkyGrid plugin) {
+	this.plugin = plugin;
 	this.players = plugin.getPlayers();
     }
 
@@ -65,11 +65,6 @@ public class JoinLeaveEvents implements Listener {
 	    // Default locale
 	    plugin.getPlayers().setLocale(playerUUID,"");
 	}
-	// Check updates
-	if (player.isOp() && plugin.getUpdateCheck() != null) {
-	    plugin.checkUpdatesNotify(player);
-	}
-
 	if (players == null) {
 	    plugin.getLogger().severe("players is NULL");
 	}

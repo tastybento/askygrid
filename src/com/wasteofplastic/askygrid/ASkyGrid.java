@@ -1,18 +1,18 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+ * This file is part of ASkyGrid.
  *
- *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     ASkyGrid is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
- *     ASkyBlock is distributed in the hope that it will be useful,
+ *     ASkyGrid is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 
 package com.wasteofplastic.askygrid;
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -37,33 +36,30 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.wasteofplastic.askygrid.NotSetup.Reason;
 import com.wasteofplastic.askygrid.commands.AdminCmd;
 import com.wasteofplastic.askygrid.commands.Challenges;
 import com.wasteofplastic.askygrid.commands.SkyGridCmd;
-import com.wasteofplastic.askygrid.generators.SkyGridGenerator;
+import com.wasteofplastic.askygrid.generators.SkyGridGen;
+import com.wasteofplastic.askygrid.listeners.GridGuard;
 import com.wasteofplastic.askygrid.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askygrid.listeners.NetherPortals;
 import com.wasteofplastic.askygrid.listeners.PlayerEvents;
-import com.wasteofplastic.askygrid.panels.ControlPanel;
+import com.wasteofplastic.askygrid.panels.ClaimsPanel;
 import com.wasteofplastic.askygrid.panels.WarpPanel;
 import com.wasteofplastic.askygrid.util.VaultHelper;
 
 /**
  * @author tastybento
- *         Main ASkyBlock class - provides an island minigame in a sea of acid
+ *         Main ASkyGrid class - provides an grid minigame in a sea of acid
  */
 public class ASkyGrid extends JavaPlugin {
     // This plugin
     private static ASkyGrid plugin;
-    // The ASkyBlock world
-    private static World islandWorld = null;
+    // The ASkyGrid world
+    private static World gridWorld = null;
     private static World netherWorld = null;
-    // Flag indicating if a new islands is in the process of being generated or
-    // not
-    private boolean newIsland = false;
     // Player folder file
     private File playersFolder;
     // Challenges object
@@ -74,10 +70,10 @@ public class ASkyGrid extends JavaPlugin {
     private PlayerCache players;
     // Listeners
     private WarpSigns warpSignsListener;
-    // Island grid manager
+    // grid grid manager
     private GridManager grid;
-    // Island command object
-    private SkyGridCmd islandCmd;
+    // grid command object
+    private SkyGridCmd gridCmd;
     // Database
     private TinyDB tinyDB;
     // Warp panel
@@ -85,28 +81,26 @@ public class ASkyGrid extends JavaPlugin {
     // V1.8 or later
     private boolean onePointEight;
 
-    private boolean debug = false;
-
-    // Level calc
-    private boolean calculatingLevel = false;
-
     // Update object
     private Update updateCheck = null;
 
     // Messages object
     private Messages messages;
+    
+    // Claims panel
+    private ClaimsPanel claimsPanel;
 
     /**
-     * Returns the World object for the island world named in config.yml.
+     * Returns the World object for the grid world named in config.yml.
      * If the world does not exist then it is created.
      * 
-     * @return islandWorld - Bukkit World object for the ASkyBlock world
+     * @return gridWorld - Bukkit World object for the ASkyGrid world
      */
-    public static World getIslandWorld() {
-	if (islandWorld == null) {
+    public static World getGridWorld() {
+	if (gridWorld == null) {
 	    // Bukkit.getLogger().info("DEBUG worldName = " +
 	    // Settings.worldName);
-	    islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new SkyGridGenerator())
+	    gridWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new SkyGridGen())
 		    .createWorld();
 	    // Make the nether if it does not exist
 	    if (Settings.createNether) {
@@ -138,15 +132,15 @@ public class ASkyGrid extends JavaPlugin {
 
 	}
 	// Set world settings
-	islandWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
-	islandWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
-	islandWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+	gridWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
+	gridWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+	gridWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 
-	return islandWorld;
+	return gridWorld;
     }
 
     /**
-     * @return ASkyBlock object instance
+     * @return ASkyGrid object instance
      */
     public static ASkyGrid getPlugin() {
 	return plugin;
@@ -214,7 +208,7 @@ public class ASkyGrid extends JavaPlugin {
 	// This can no longer be run in onEnable because the plugin is loaded at
 	// startup and so key variables are
 	// not known to the server. Instead it is run one tick after startup.
-	// getIslandWorld();
+	// getgridWorld();
 
 	// Set and make the player's directory if it does not exist and then
 	// load players into memory
@@ -223,11 +217,11 @@ public class ASkyGrid extends JavaPlugin {
 	    playersFolder.mkdir();
 	}
 	// Set up commands for this plugin
-	islandCmd = new SkyGridCmd(this);
+	gridCmd = new SkyGridCmd(this);
 
 	AdminCmd adminCmd = new AdminCmd(this);
-	getCommand("asg").setExecutor(islandCmd);
-	getCommand("asg").setTabCompleter(islandCmd);
+	getCommand("asg").setExecutor(gridCmd);
+	getCommand("asg").setTabCompleter(gridCmd);
 	getCommand("asgc").setExecutor(getChallenges());
 	getCommand("asgc").setTabCompleter(getChallenges());
 	getCommand("asgadmin").setExecutor(adminCmd);
@@ -246,14 +240,14 @@ public class ASkyGrid extends JavaPlugin {
 	} catch (final IOException localIOException) {
 	}
 	// Kick off a few tasks on the next tick
-	// By calling getIslandWorld(), if there is no island
+	// By calling getgridWorld(), if there is no grid
 	// world, it will be created
 	getServer().getScheduler().runTask(this, new Runnable() {
 	    @Override
 	    public void run() {
 		// Create the world if it does not exist. This is run after the
 		// server starts.
-		getIslandWorld();
+		getGridWorld();
 		// Load warps
 		getWarpSignsListener().loadWarpList();
 		// Load the warp panel
@@ -261,9 +255,9 @@ public class ASkyGrid extends JavaPlugin {
 		    warpPanel = new WarpPanel(plugin);
 		    getServer().getPluginManager().registerEvents(warpPanel, plugin);
 		}
-		// Minishop - must wait for economy to load before we can use
+		claimsPanel = new ClaimsPanel(plugin);
+		
 		// econ
-		getServer().getPluginManager().registerEvents(new ControlPanel(plugin), plugin);
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
 		    // Check if the world generator is registered correctly
 		    getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
@@ -298,117 +292,8 @@ public class ASkyGrid extends JavaPlugin {
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
-		// Check for updates asynchronously
-		if (Settings.updateCheck) {
-		    checkUpdates();
-		    new BukkitRunnable() {
-			int count = 0;
-			@Override
-			public void run() {
-			    if (count++ > 10) {
-				plugin.getLogger().info("No updates found. (No response from server after 10s)");
-				this.cancel();
-			    } else {
-				// Wait for the response
-				if (updateCheck != null) {
-				    if (updateCheck.isSuccess()) {
-					checkUpdatesNotify(null);
-				    } else {
-					plugin.getLogger().info("No update.");
-				    }
-				    this.cancel();
-				}
-			    }
-			}
-		    }.runTaskTimer(plugin, 0L, 20L); // Check status every second
-		}
 	    }
 	});
-    }
-
-    /**
-     * Checks to see if there are any plugin updates
-     * Called when reloading settings too
-     */
-    public void checkUpdates() {
-	// Version checker
-	getLogger().info("Checking for new updates...");
-	getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
-	    @Override
-	    public void run() {
-		//updateCheck = new Update(80095); // AcidIsland
-		//if (!updateCheck.isSuccess()) {
-		//    updateCheck = null;
-		//}
-	    }
-	});
-    }
-
-    public void checkUpdatesNotify(Player p) {
-	boolean update = false;
-	final String pluginVersion = plugin.getDescription().getVersion();
-	// Check to see if the latest file is newer that this one
-	String[] split = plugin.getUpdateCheck().getVersionName().split(" V");
-	// Only do this if the format is what we expect
-	if (split.length == 2) {
-	    //getLogger().info("DEBUG: " + split[1]);
-	    // Need to escape the period in the regex expression
-	    String[] updateVer = split[1].split("\\.");
-	    //getLogger().info("DEBUG: split length = " + updateVer.length);
-	    // CHeck the version #'s
-	    String[] pluginVer = pluginVersion.split("\\.");
-	    //getLogger().info("DEBUG: split length = " + pluginVer.length);
-	    // Run through major, minor, sub
-	    for (int i = 0; i < Math.max(updateVer.length, pluginVer.length); i++) {
-		try {
-		    int updateCheck = 0;
-		    if (i < updateVer.length) {
-			updateCheck = Integer.valueOf(updateVer[i]);
-		    }
-		    int pluginCheck = 0;
-		    if (i < pluginVer.length) {
-			pluginCheck = Integer.valueOf(pluginVer[i]);
-		    }
-		    //getLogger().info("DEBUG: update is " + updateCheck + " plugin is " + pluginCheck);
-		    if (updateCheck < pluginCheck) {
-			//getLogger().info("DEBUG: plugin is newer!");
-			//plugin is newer
-			update = false;
-			break;
-		    } else if (updateCheck > pluginCheck) {
-			//getLogger().info("DEBUG: update is newer!");
-			update = true;
-			break;
-		    }
-		} catch (Exception e) {
-		    getLogger().warning("Could not determine update's version # ");
-		    getLogger().warning("Plugin version: "+ pluginVersion);
-		    getLogger().warning("Update version: " + plugin.getUpdateCheck().getVersionName());
-		    return;
-		}
-	    }
-	}
-	// Show the results
-	if (p != null) {
-	    if (!update) {
-		return;
-	    } else {
-		// Player login
-		p.sendMessage(ChatColor.GOLD + plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
-
-		p.sendMessage(ChatColor.RED + "Update at: http://dev.bukkit.org/bukkit-plugins/askygrid");
-
-	    }
-	} else {
-	    // Console
-	    if (!update) {
-		getLogger().info("No updates available.");
-		return;
-	    } else {
-		getLogger().info(plugin.getUpdateCheck().getVersionName() + " is available! You are running " + pluginVersion);
-		getLogger().info("Update at: http://dev.bukkit.org/bukkit-plugins/askygrid");
-	    }
-	}
     }
 
     /**
@@ -423,7 +308,7 @@ public class ASkyGrid extends JavaPlugin {
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
-	return new SkyGridGenerator();
+	return new SkyGridGen();
     }
 
     /**
@@ -468,23 +353,8 @@ public class ASkyGrid extends JavaPlugin {
     }
 
     /**
-     * @return the calculatingLevel
-     */
-    public boolean isCalculatingLevel() {
-	return calculatingLevel;
-    }
-
-    /**
-     * @return the newIsland
-     */
-    public boolean isNewIsland() {
-	return newIsland;
-    }
-
-    /**
      * Loads the various settings from the config.yml file into the plugin
      */
-    @SuppressWarnings("deprecation")
     public boolean loadPluginConfig() {
 	// getLogger().info("*********************************************");
 	try {
@@ -498,6 +368,7 @@ public class ASkyGrid extends JavaPlugin {
 	// Add this to the config
 	// Default is locale.yml
 	availableLocales.put("locale", new Locale(this, "locale"));
+	/*
 	availableLocales.put("de-DE", new Locale(this,"de-DE"));
 	availableLocales.put("en-US", new Locale(this,"en-US"));
 	availableLocales.put("es-ES", new Locale(this,"es-ES"));
@@ -510,7 +381,7 @@ public class ASkyGrid extends JavaPlugin {
 	availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
 	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
 	availableLocales.put("zh-TW", new Locale(this,"zh-TW"));
-
+*/
 	// Assign settings
 	String configVersion = getConfig().getString("general.version", "");
 	//getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
@@ -543,7 +414,7 @@ public class ASkyGrid extends JavaPlugin {
 	    }
 	}
 	// Debug
-	Settings.debug = getConfig().getInt("debug", 0);
+	Settings.debug = getConfig().getInt("general.debug", 0);
 	// Mute death messages
 	Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
 	// Warp panel
@@ -559,7 +430,7 @@ public class ASkyGrid extends JavaPlugin {
 	Settings.updateCheck = getConfig().getBoolean("general.checkupdates", true);
 	Settings.startCommands = getConfig().getStringList("general.startcommands");
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
-	// Check if /island command is allowed when falling
+	// Check if /asg command is allowed when falling
 	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
 	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max home number
@@ -569,40 +440,18 @@ public class ASkyGrid extends JavaPlugin {
 	}
 	// Settings from config.yml
 	Settings.worldName = getConfig().getString("general.worldName");
+	Settings.gridHeight = getConfig().getInt("general.gridheight", 128);
+	Settings.spawnHeight = getConfig().getInt("general.spawnheight", 128);
 	Settings.createNether = getConfig().getBoolean("general.createnether", true);
 	if (!Settings.createNether) {
 	    getLogger().info("The Nether is disabled");
 	}
-	Settings.islandDistance = getConfig().getInt("island.distance", 200);
-	if (Settings.islandDistance < 50) {
-	    Settings.islandDistance = 50;
-	    getLogger().info("Setting minimum island distance to 50");
+	Settings.spawnDistance = getConfig().getInt("general.distance", 1000);
+	if (Settings.spawnDistance < 1) {
+	    Settings.spawnDistance = 1;
+	    getLogger().info("Setting minimum spawn distance to 1");
 	}
-	Settings.islandXOffset = getConfig().getInt("island.xoffset", 0);
-	if (Settings.islandXOffset < 0) {
-	    Settings.islandXOffset = 0;
-	    getLogger().info("Setting minimum island X Offset to 0");
-	} else if (Settings.islandXOffset > Settings.islandDistance) {
-	    Settings.islandXOffset = Settings.islandDistance;
-	    getLogger().info("Setting maximum island X Offset to " + Settings.islandDistance);
-	}
-	Settings.islandZOffset = getConfig().getInt("island.zoffset", 0);
-	if (Settings.islandZOffset < 0) {
-	    Settings.islandZOffset = 0;
-	    getLogger().info("Setting minimum island Z Offset to 0");
-	} else if (Settings.islandZOffset > Settings.islandDistance) {
-	    Settings.islandZOffset = Settings.islandDistance;
-	    getLogger().info("Setting maximum island Z Offset to " + Settings.islandDistance);
-	}
-	long x = getConfig().getLong("island.startx", 0);
-	// Check this is a multiple of island distance
-	long z = getConfig().getLong("island.startz", 0);
-	Settings.islandStartX = Math.round((double) x / Settings.islandDistance) * Settings.islandDistance + Settings.islandXOffset;
-	Settings.islandStartZ = Math.round((double) z / Settings.islandDistance) * Settings.islandDistance + Settings.islandZOffset;
-	Settings.island_level = getConfig().getInt("general.islandlevel", 120) - 5;
-	if (Settings.island_level < 0) {
-	    Settings.island_level = 0;
-	}
+
 	Settings.animalSpawnLimit = getConfig().getInt("general.animalspawnlimit", 15);
 	if (Settings.animalSpawnLimit < -1) {
 	    Settings.animalSpawnLimit = -1;
@@ -618,26 +467,17 @@ public class ASkyGrid extends JavaPlugin {
 	    Settings.waterAnimalSpawnLimit = -1;
 	}
 
-	Settings.island_protectionRange = getConfig().getInt("island.protectionRange", 100);
-	if (Settings.island_protectionRange < 1) {
-	    Settings.island_protectionRange = 1;
+	Settings.claim_protectionRange = getConfig().getInt("general.protectionRange", 100);
+	if (Settings.claim_protectionRange < 1) {
+	    Settings.claim_protectionRange = 1;
 	}
-	Settings.resetChallenges = getConfig().getBoolean("general.resetchallenges", true);
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
-	Settings.clearInventory = getConfig().getBoolean("general.resetinventory", true);
 	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
-	Settings.respawnOnIsland = getConfig().getBoolean("general.respawnonisland", false);
-	// Nether spawn protection radius
-	Settings.netherSpawnRadius = getConfig().getInt("general.netherspawnradius", 25);
-	if (Settings.netherSpawnRadius < 0) {
-	    Settings.netherSpawnRadius = 0;
-	} else if (Settings.netherSpawnRadius > 100) {
-	    Settings.netherSpawnRadius = 100;
-	}
+	Settings.respawnAtHome = getConfig().getBoolean("general.respawnonisland", false);
 	Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
-	Settings.islandRemoveMobs = getConfig().getBoolean("general.islandremovemobs", false);
+	Settings.removeMobs = getConfig().getBoolean("general.asgremovemobs", false);
 	List<String> mobWhiteList = getConfig().getStringList("general.mobwhitelist");
 	Settings.mobWhiteList.clear();
 	String valid = "BLAZE, CREEPER, SKELETON, SPIDER, GIANT, ZOMBIE, GHAST, PIG_ZOMBIE, "
@@ -658,9 +498,32 @@ public class ASkyGrid extends JavaPlugin {
 			+ "Pig_Zombie, Silverfish, Skeleton, Spider, Witch, Wither, Zombie");
 	    }
 	}
-	Settings.allowPvP = getConfig().getBoolean("island.allowPvP", false);
-	Settings.allowNetherPvP = getConfig().getBoolean("island.allowNetherPvP", false);
-	Settings.allowFireSpread = getConfig().getBoolean("island.allowfirespread", false);
+	// Assign settings
+	// General settings that affect the world
+	Settings.allowPvP = getConfig().getBoolean("general.allowPvP",true);
+	Settings.allowEnderPearls = getConfig().getBoolean("general.allowenderpearls", true);
+	Settings.allowFlowIn = getConfig().getBoolean("general.allowflowin", true);
+	Settings.allowFlowOut = getConfig().getBoolean("general.allowflowout", true);
+	Settings.allowTNTDamage = getConfig().getBoolean("general.allowTNTdamage", true);
+	Settings.allowChestDamage = getConfig().getBoolean("general.allowchestdamage", true);
+	// In-claim settings
+	Settings.allowBreakBlocks = getConfig().getBoolean("general.allowbreakblocks", false);
+	Settings.allowPlaceBlocks= getConfig().getBoolean("general.allowplaceblocks", false);
+	Settings.allowBedUse= getConfig().getBoolean("general.allowbeduse", false);
+	Settings.allowBucketUse = getConfig().getBoolean("general.allowbucketuse", false);
+	Settings.allowShearing = getConfig().getBoolean("general.allowshearing", false);
+	Settings.allowDoorUse = getConfig().getBoolean("general.allowdooruse", false);
+	Settings.allowLeverButtonUse = getConfig().getBoolean("general.allowleverbuttonuse", false);
+	Settings.allowCropTrample = getConfig().getBoolean("general.allowcroptrample", false);
+	Settings.allowChestAccess = getConfig().getBoolean("general.allowchestaccess", false);
+	Settings.allowFurnaceUse = getConfig().getBoolean("general.allowfurnaceuse", false);
+	Settings.allowRedStone = getConfig().getBoolean("general.allowredstone", false);
+	Settings.allowMusic = getConfig().getBoolean("general.allowmusic", false);
+	Settings.allowCrafting = getConfig().getBoolean("general.allowcrafting", false);
+	Settings.allowBrewing = getConfig().getBoolean("general.allowbrewing", false);
+	Settings.allowGateUse = getConfig().getBoolean("general.allowgateuse", false);
+	Settings.allowMobHarm = getConfig().getBoolean("general.allowmobharm", false);
+
 	// Challenges
 	getChallenges();
 	// Challenge completion
@@ -683,9 +546,11 @@ public class ASkyGrid extends JavaPlugin {
 	manager.registerEvents(new PlayerEvents(this), this);
 	// Events for when a player joins or leaves the server
 	manager.registerEvents(new JoinLeaveEvents(this), this);
-	// Enables warp signs in ASkyBlock
+	// Enables warp signs in ASkyGrid
 	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
+	// Claim protection
+	manager.registerEvents(new GridGuard(this), this);
     }
 
 
@@ -713,10 +578,8 @@ public class ASkyGrid extends JavaPlugin {
 	    player.getEquipment().clear();
 	}
 	player.setGameMode(GameMode.SURVIVAL);
-	if (Settings.resetChallenges) {
-	    // Reset the player's challenge status
-	    players.resetAllChallenges(player.getUniqueId());
-	}
+	// Reset the player's challenge status
+	players.resetAllChallenges(player.getUniqueId());
 	// Save the player
 	players.save(player.getUniqueId());
 	// Update the inventory
@@ -733,25 +596,9 @@ public class ASkyGrid extends JavaPlugin {
 
     public void restartEvents() {
 	final PluginManager manager = getServer().getPluginManager();
-	// Enables warp signs in ASkyBlock
+	// Enables warp signs in ASkyGrid
 	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
-    }
-
-    /**
-     * @param calculatingLevel
-     *            the calculatingLevel to set
-     */
-    public void setCalculatingLevel(boolean calculatingLevel) {
-	this.calculatingLevel = calculatingLevel;
-    }
-
-    /**
-     * @param newIsland
-     *            the newIsland to set
-     */
-    public void setNewIsland(boolean newIsland) {
-	this.newIsland = newIsland;
     }
 
     public void unregisterEvents() {
@@ -766,7 +613,7 @@ public class ASkyGrid extends JavaPlugin {
 	    if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
 		Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
 	    }
-	    netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).generator(new SkyGridGenerator()).createWorld();
+	    netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).generator(new SkyGridGen()).createWorld();
 	    netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 	    netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 	}
@@ -799,10 +646,10 @@ public class ASkyGrid extends JavaPlugin {
     }
 
     /**
-     * @return the islandCmd
+     * @return the gridCmd
      */
-    public SkyGridCmd getIslandCmd() {
-	return islandCmd;
+    public SkyGridCmd getGridCmd() {
+	return gridCmd;
     }
 
     /**
@@ -839,5 +686,9 @@ public class ASkyGrid extends JavaPlugin {
      */
     public boolean isOnePointEight() {
 	return onePointEight;
+    }
+
+    public ClaimsPanel getClaimsPanel() {
+	return claimsPanel;
     }
 }

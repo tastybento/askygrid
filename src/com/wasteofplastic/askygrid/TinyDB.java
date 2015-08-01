@@ -96,7 +96,7 @@ public class TinyDB {
 	    int count = 0;
 	    for (final File file : plugin.getPlayersFolder().listFiles(ymlFilter)) {
 		if (count % 1000 == 0) {
-		    System.out.println("[ASkyBlock]: Processed " + count + " names to database");
+		    System.out.println("[ASkyGrid]: Processed " + count + " names to database");
 		}
 		count++;
 		try {
@@ -118,17 +118,17 @@ public class TinyDB {
 		    }
 		    scanner.close();
 		} catch (Exception ex) {
-		    System.err.println("[ASkyBlock/AcidIsland]: Problem reading " + file.getName() + " skipping...");
+		    System.err.println("[ASkyGrid/AcidIsland]: Problem reading " + file.getName() + " skipping...");
 		    //ex.printStackTrace();
 		}
 	    }
 	    /** Map changes are not persisted yet, commit them (save to disk) */
 	    recMan.commit();
-	    System.out.println("[ASkyBlock]: Complete. Processed " + count + " names to database");
+	    System.out.println("[ASkyGrid]: Complete. Processed " + count + " names to database");
 	    // Set flag
 	    dbReady = true;
 	} catch (Exception e) {
-	    System.err.println("[ASkyBlock/AcidIsland] : Problem creating database");
+	    System.err.println("[ASkyGrid/AcidIsland] : Problem creating database");
 	}
     }
 

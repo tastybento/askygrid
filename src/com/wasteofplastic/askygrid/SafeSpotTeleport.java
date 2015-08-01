@@ -77,8 +77,8 @@ public class SafeSpotTeleport {
 		}
 	    }
 	    // Add the rest of the island protected area
-	    for (int x = (islandLoc.getBlockX() - Settings.island_protectionRange) /16; x <= (islandLoc.getBlockX() + Settings.island_protectionRange)/16; x++) {
-		for (int z = (islandLoc.getBlockZ() - Settings.island_protectionRange) /16; z <= (islandLoc.getBlockZ() + Settings.island_protectionRange)/16; z++) {
+	    for (int x = (islandLoc.getBlockX() - Settings.claim_protectionRange) /16; x <= (islandLoc.getBlockX() + Settings.claim_protectionRange)/16; x++) {
+		for (int z = (islandLoc.getBlockZ() - Settings.claim_protectionRange) /16; z <= (islandLoc.getBlockZ() + Settings.claim_protectionRange)/16; z++) {
 		    // This includes the center spots again, so is not as efficient...
 		    chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
 		}  
@@ -188,7 +188,7 @@ public class SafeSpotTeleport {
 				//Block b = player.getLocation().getBlock();
 				//if (b.getType() != Material.PORTAL) {
 				/*
-				if (world.equals(ASkyBlock.getNetherWorld())) {
+				if (world.equals(ASkyGrid.getNetherWorld())) {
 				    for (int x = -1; x < 3; x++) {
 					for (int y = -1; y< 4; y++) {
 					    Location l = new Location(islandLoc.getWorld(), destination.getBlockX() + x, destination.getBlockY() + y, destination.getBlockZ() -1);

@@ -2,6 +2,11 @@ package com.wasteofplastic.askygrid.generators;
 
 import java.util.Random;
 
+/**
+ * Generates a series of numbers in random order. Used to distribute the
+ * items in a chest randomly.
+ *
+ */
 public class RandomSeries {
 	private int[] reset;
 	private int[] series;

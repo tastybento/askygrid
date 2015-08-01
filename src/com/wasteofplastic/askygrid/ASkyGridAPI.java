@@ -98,7 +98,7 @@ public class ASkyGridAPI {
      * @return the island overworld
      */
     public World getIslandWorld() {
-	return ASkyGrid.getIslandWorld();
+	return ASkyGrid.getGridWorld();
     }
     
     /**

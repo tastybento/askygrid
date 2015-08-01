@@ -14,8 +14,8 @@ public class WorldStyles {
 	private static final Map<World.Environment, WorldStyles> map = 
 			new HashMap<World.Environment, WorldStyles>(); 
 	
-	public final BlockProbability p;
-	public final List<EntityType> spawns;
+	private final BlockProbability p;
+	private final List<EntityType> spawns;
 	
 	private WorldStyles(BlockProbability prob, List<EntityType> spwn) {
 		p = prob;
@@ -33,6 +33,20 @@ public class WorldStyles {
 		return map.get(style);
 	}
 	
+	/**
+	 * @return the p
+	 */
+	public BlockProbability getP() {
+	    return p;
+	}
+
+	/**
+	 * @return the spawns
+	 */
+	public List<EntityType> getSpawns() {
+	    return spawns;
+	}
+
 	private static BlockProbability normalP() {
 		BlockProbability p = new BlockProbability();
 		p.addBlock(1, 120);  //stone
@@ -64,8 +78,8 @@ public class WorldStyles {
 		p.addBlock(47, 3);   //bookshelves
 		p.addBlock(48, 5);   //mossy cobblestone
 		p.addBlock(49, 5);   //obsidian
-		//p.addBlock(52, 1);   //spawner
-		//p.addBlock(54, 1);   //chest
+		p.addBlock(52, 2);   //spawner
+		p.addBlock(54, 1);   //chest
 		p.addBlock(56, 1);   //diamond ore
 		p.addBlock(73, 8);   //redstone ore
 		p.addBlock(79, 4);   //ice
@@ -83,8 +97,8 @@ public class WorldStyles {
 		BlockProbability p = new BlockProbability();
 		p.addBlock(11, 50);  //still lava
 		p.addBlock(13, 30);  //gravel
-		//p.addBlock(52, 2);   //mob spawner
-		//p.addBlock(54, 1);   //chest
+		p.addBlock(52, 2);   //mob spawner
+		p.addBlock(54, 1);   //chest
 		p.addBlock(87, 300); //netherack
 		p.addBlock(88, 100); //soulsand
 		p.addBlock(89, 50);  //glowstone

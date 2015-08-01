@@ -1,18 +1,18 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+ * This file is part of ASkyGrid.
  *
- *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     ASkyGrid is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
- *     ASkyBlock is distributed in the hope that it will be useful,
+ *     ASkyGrid is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package com.wasteofplastic.askygrid;
 
@@ -42,7 +42,7 @@ import com.wasteofplastic.askygrid.util.Util;
 import com.wasteofplastic.askygrid.util.VaultHelper;
 
 /**
- * Handles warping in ASkyBlock Players can add one sign
+ * Handles warping in ASkyGrid Players can add one sign
  * 
  * @author tastybento
  * 
@@ -70,7 +70,7 @@ public class WarpSigns implements Listener {
     public void onSignBreak(BlockBreakEvent e) {
 	Block b = e.getBlock();
 	Player player = e.getPlayer();
-	if (b.getWorld().equals(ASkyGrid.getIslandWorld())) {
+	if (b.getWorld().equals(ASkyGrid.getGridWorld())) {
 	    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		Sign s = (Sign) b.getState();
 		if (s != null) {
@@ -114,7 +114,7 @@ public class WarpSigns implements Listener {
 	//plugin.getLogger().info("DEBUG: SignChangeEvent called");
 	String title = e.getLine(0);
 	Player player = e.getPlayer();
-	if (player.getWorld().equals(ASkyGrid.getIslandWorld())) {
+	if (player.getWorld().equals(ASkyGrid.getGridWorld())) {
 	    //plugin.getLogger().info("DEBUG: Correct world");
 	    if (e.getBlock().getType().equals(Material.SIGN_POST) || e.getBlock().getType().equals(Material.WALL_SIGN)) {
 
@@ -232,8 +232,10 @@ public class WarpSigns implements Listener {
 		//plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
-		if (b.getType().equals(Material.SIGN_POST)) {
+		if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		    warpList.put(playerUUID, temp.get(s));
+		    // Establish claim
+		    plugin.getGrid().addClaimRegion(l, playerUUID);
 		} else {
 		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");
 		}
@@ -261,6 +263,8 @@ public class WarpSigns implements Listener {
 	}
 	warpList.put(player, locS);
 	saveWarpList(true);
+	// Add this claim
+	plugin.getGrid().addClaimRegion(loc, player);
 	return true;
     }
 
@@ -310,6 +314,7 @@ public class WarpSigns implements Listener {
 	    }
 	    for (UUID rp : playerList) {
 		warpList.remove(rp);
+		plugin.getGrid().deleteClaimRegion(loc);
 		final Player p = plugin.getServer().getPlayer(rp);
 		if (p != null) {
 		    // Inform the player

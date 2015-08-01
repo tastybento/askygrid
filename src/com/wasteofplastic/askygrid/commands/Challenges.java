@@ -1,18 +1,18 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+ * This file is part of ASkyGrid.
  *
- *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     ASkyGrid is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
- *     ASkyBlock is distributed in the hope that it will be useful,
+ *     ASkyGrid is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package com.wasteofplastic.askygrid.commands;
 
@@ -188,7 +188,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    return true;
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
-		if (!player.getWorld().equals(ASkyGrid.getIslandWorld())) {
+		if (!player.getWorld().equals(ASkyGrid.getGridWorld())) {
 		    // Check if in new nether
 		    if (!Settings.createNether || !player.getWorld().equals(ASkyGrid.getNetherWorld())) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
@@ -1372,14 +1372,13 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		// Add a navigation book
 		List<String> lore = new ArrayList<String>();
 		if (i <= levelDone) {
-		    CPItem item = new CPItem(Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
+		    CPItem item = new CPItem(plugin, Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i),Settings.challengeLevels.get(i));
 		    lore = Util.chop(ChatColor.WHITE, plugin.myLocale(player.getUniqueId()).challengesNavigation.replace("[level]", Settings.challengeLevels.get(i)), 25);
-		    item.setNextSection(Settings.challengeLevels.get(i));
 		    item.setLore(lore);
 		    cp.add(item);
 		} else {
 		    // Hint at what is to come
-		    CPItem item = new CPItem(Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
+		    CPItem item = new CPItem(plugin, Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null);
 		    // Add the level
 		    int toDo = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
 		    lore = Util.chop(
@@ -1500,7 +1499,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
 	    // Store the challenge panel item and the command that will be
 	    // called if it is activated.
-	    item = new CPItem(icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName, null);
+	    item = new CPItem(plugin, icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName);
 	    // Get the challenge description, that changes depending on
 	    // whether the challenge is complete or not.
 	    List<String> lore = challengeDescription(challengeName, player);

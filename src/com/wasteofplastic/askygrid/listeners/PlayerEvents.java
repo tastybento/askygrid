@@ -1,18 +1,18 @@
 /*******************************************************************************
- * This file is part of ASkyBlock.
+ * This file is part of ASkyGrid.
  *
- *     ASkyBlock is free software: you can redistribute it and/or modify
+ *     ASkyGrid is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
- *     ASkyBlock is distributed in the hope that it will be useful,
+ *     ASkyGrid is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
 package com.wasteofplastic.askygrid.listeners;
 
@@ -62,7 +62,7 @@ public class PlayerEvents implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!Settings.respawnOnIsland) {
+	if (!Settings.respawnAtHome) {
 	    return;
 	}
 	if (respawn.contains(e.getPlayer().getUniqueId())) {
@@ -84,11 +84,11 @@ public class PlayerEvents implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!Settings.respawnOnIsland) {
+	if (!Settings.respawnAtHome) {
 	    return;
 	}
 	// Died in island space?
-	if (!ASkyGrid.getIslandWorld().equals(e.getEntity().getWorld())) {
+	if (!ASkyGrid.getGridWorld().equals(e.getEntity().getWorld())) {
 	    return;
 	}
 	UUID playerUUID = e.getEntity().getUniqueId();
@@ -114,7 +114,7 @@ public class PlayerEvents implements Listener {
 	 * plugin.getLogger().info(e.getEventName());
 	 * }
 	 */
-	if (!e.getPlayer().getWorld().equals(ASkyGrid.getIslandWorld())) {
+	if (!e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld())) {
 	    // If the player is not in the right world, then cancel any falling flags
 	    unsetFalling(e.getPlayer().getUniqueId());
 	    return;
@@ -149,7 +149,7 @@ public class PlayerEvents implements Listener {
 	if (debug) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!e.getPlayer().getWorld().equals(ASkyGrid.getIslandWorld()) || Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
+	if (!e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld()) || Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
 		|| !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
 	    return;
 	}
@@ -174,7 +174,7 @@ public class PlayerEvents implements Listener {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// We only check if the player is teleporting from an Island world and to is not null
-	if (e.getTo() == null || !e.getPlayer().getWorld().equals(ASkyGrid.getIslandWorld())) {
+	if (e.getTo() == null || !e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld())) {
 	    return;
 	}
 	// Check if ready

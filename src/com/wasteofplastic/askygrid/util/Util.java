@@ -23,6 +23,7 @@ import com.wasteofplastic.askygrid.PlayerCache;
  */
 public class Util {
     private static ASkyGrid plugin = ASkyGrid.getPlugin();
+    private static int debug = 0;
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
@@ -279,5 +280,19 @@ public class Util {
 		returned.add(p.getName());
 	}
 	return returned;
+	}
+
+	/**
+	 * General logger method
+	 * @param level
+	 * @param message
+	 */
+	public static void logger(int level, String message) {
+	    if (debug >= level) {
+	        if (level > 1) {
+	    	message = "DEBUG["+level+"]:" + message;
+	        }
+	        plugin.getLogger().info(message);
+	    }
 	}
 }
