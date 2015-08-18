@@ -116,7 +116,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	 * }
 	 */
 	// Check permissions
-	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.challenges")) {
+	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.challenges")) {
 	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 	    return true;
 	}
@@ -146,7 +146,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    if (getChallengeConfig().getBoolean("challenges.challengeList." + cmd[0].toLowerCase() + ".takeItems")) {
 			sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesitemTakeWarning);
 		    }
-		} else if (type.equals("island")) {
+		} else if (type.equals("collect")) {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorItemsNotThere);
 		}
 		if (plugin.getPlayers().checkChallenge(player.getUniqueId(), challenge)
@@ -659,7 +659,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	// If the challenge is an island type and already done, then this too is
 	// not repeatable
 	if (plugin.getPlayers().checkChallenge(player.getUniqueId(), challenge)
-		&& getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("island")) {
+		&& getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("collect")) {
 	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesnotRepeatable);
 	    return false;
 	}
@@ -676,9 +676,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	}
 	// plugin.getLogger().info("DEBUG: 5");
 	// Check if this is an island-based challenge
-	if (getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("island")) {
+	if (getChallengeConfig().getString("challenges.challengeList." + challenge + ".type").equalsIgnoreCase("collect")) {
 	    // plugin.getLogger().info("DEBUG: 6");
-	    if (!hasRequired(player, challenge, "island")) {
+	    if (!hasRequired(player, challenge, "collect")) {
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotCloseEnough);
 		player.sendMessage(ChatColor.RED + getChallengeConfig().getString("challenges.challengeList." + challenge + ".description"));
 		return false;
@@ -689,7 +689,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorCommandNotReady);
 	plugin.getLogger().severe(
 		"The challenge " + challenge + " is of an unknown type " + getChallengeConfig().getString("challenges.challengeList." + challenge + ".type"));
-	plugin.getLogger().severe("Types should be 'island' or 'inventory' ");
+	plugin.getLogger().severe("Types should be 'collect' or 'inventory' ");
 	return false;
     }
 
@@ -1165,7 +1165,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    }
 	    return true;
 	}
-	if (type.equalsIgnoreCase("island")) {
+	if (type.equalsIgnoreCase("collect")) {
 	    final HashMap<Material, Integer> neededItem = new HashMap<Material, Integer>();
 	    final HashMap<EntityType, Integer> neededEntities = new HashMap<EntityType, Integer>();
 	    for (int i = 0; i < reqList.length; i++) {
@@ -1372,13 +1372,14 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		// Add a navigation book
 		List<String> lore = new ArrayList<String>();
 		if (i <= levelDone) {
-		    CPItem item = new CPItem(plugin, Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i),Settings.challengeLevels.get(i));
+		    CPItem item = new CPItem(Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		    lore = Util.chop(ChatColor.WHITE, plugin.myLocale(player.getUniqueId()).challengesNavigation.replace("[level]", Settings.challengeLevels.get(i)), 25);
+		    item.setNextSection(Settings.challengeLevels.get(i));
 		    item.setLore(lore);
 		    cp.add(item);
 		} else {
 		    // Hint at what is to come
-		    CPItem item = new CPItem(plugin, Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null);
+		    CPItem item = new CPItem(Material.BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		    // Add the level
 		    int toDo = checkLevelCompletion(player, Settings.challengeLevels.get(i - 1));
 		    lore = Util.chop(
@@ -1499,7 +1500,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	if (!complete || ((complete && repeatable) || !Settings.removeCompleteOntimeChallenges)) {
 	    // Store the challenge panel item and the command that will be
 	    // called if it is activated.
-	    item = new CPItem(plugin, icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName);
+	    item = new CPItem(icon, description, Settings.CHALLENGECOMMAND + " c " + challengeName, null);
 	    // Get the challenge description, that changes depending on
 	    // whether the challenge is complete or not.
 	    List<String> lore = challengeDescription(challengeName, player);
@@ -1571,7 +1572,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		if (getChallengeConfig().getBoolean("challenges.challengeList." + challenge.toLowerCase() + ".takeItems")) {
 		    result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengesitemTakeWarning, length));
 		}
-	    } else if (type.equals("island")) {
+	    } else if (type.equals("collect")) {
 		result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengeserrorItemsNotThere, length));
 	    }
 	}

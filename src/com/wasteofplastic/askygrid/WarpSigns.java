@@ -124,7 +124,7 @@ public class WarpSigns implements Listener {
 		if (title.equalsIgnoreCase(plugin.myLocale().warpswelcomeLine)) {
 		    //plugin.getLogger().info("DEBUG: Welcome sign detected");
 		    // Welcome sign detected - check permissions
-		    if (!(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.addwarp"))) {
+		    if (!(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.addwarp"))) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
 			return;
 		    }
@@ -234,8 +234,6 @@ public class WarpSigns implements Listener {
 		// Check that a warp sign is still there
 		if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		    warpList.put(playerUUID, temp.get(s));
-		    // Establish claim
-		    plugin.getGrid().addClaimRegion(l, playerUUID);
 		} else {
 		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");
 		}
@@ -263,8 +261,6 @@ public class WarpSigns implements Listener {
 	}
 	warpList.put(player, locS);
 	saveWarpList(true);
-	// Add this claim
-	plugin.getGrid().addClaimRegion(loc, player);
 	return true;
     }
 
@@ -314,7 +310,6 @@ public class WarpSigns implements Listener {
 	    }
 	    for (UUID rp : playerList) {
 		warpList.remove(rp);
-		plugin.getGrid().deleteClaimRegion(loc);
 		final Player p = plugin.getServer().getPlayer(rp);
 		if (p != null) {
 		    // Inform the player

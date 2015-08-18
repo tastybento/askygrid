@@ -44,7 +44,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import com.wasteofplastic.askygrid.ASkyGrid;
-import com.wasteofplastic.askygrid.ClaimRegion;
 import com.wasteofplastic.askygrid.GridManager;
 import com.wasteofplastic.askygrid.Settings;
 import com.wasteofplastic.askygrid.listeners.PlayerEvents;
@@ -292,27 +291,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
 		player.sendMessage(ChatColor.GOLD + "(c) 2015 by tastybento");
 		return true;
-	    }
-
-	    if (split[0].equalsIgnoreCase("controlpanel") || split[0].equalsIgnoreCase("cp")) {
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
-		    // Check if a player is in a warp zone
-		    ClaimRegion cr = plugin.getGrid().getClaimRegionAt(player.getLocation());
-		    if (cr == null) {
-			player.sendMessage(ChatColor.RED + plugin.myLocale(playerUUID).warpserrorNoPlace);
-		    } else {
-			if (player.isOp() || cr.getOwner().equals(playerUUID) || cr.getOwnerTrustedUUID().contains(playerUUID)) {
-			    player.openInventory(plugin.getClaimsPanel().controlPanel(player));
-			} else {
-			    player.openInventory(plugin.getClaimsPanel().infoPanel(player));
-			}
-		    }
-		    return true;
-		}
-		// }
-	    }
-	    // /island <command>
-	    if (split[0].equalsIgnoreCase("warp")) {
+	    } else if (split[0].equalsIgnoreCase("warp")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
 		    player.sendMessage(ChatColor.YELLOW + "/island warp <player>: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpWarp);
 		    return true;

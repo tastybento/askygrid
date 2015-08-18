@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +37,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.wasteofplastic.askygrid.ASkyGrid;
 import com.wasteofplastic.askygrid.Settings;
+import com.wasteofplastic.askygrid.util.VaultHelper;
 
 /**
  * @author tastybento
@@ -233,4 +235,28 @@ public class PlayerEvents implements Listener {
 	fallingPlayers.remove(uniqueId);
     }
 
+    /**
+     * Prevents players from using commands like /spawner
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    public void onPlayerCommand(final PlayerCommandPreprocessEvent e) {
+	if (debug) {
+	    plugin.getLogger().info("Player command " + e.getEventName() + ": " + e.getMessage());
+	}
+	if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bannedcommands")) {
+	    return;
+	}
+	// Check world
+	if (!e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld()) && !e.getPlayer().getWorld().equals(ASkyGrid.getNetherWorld())) {
+	    return;
+	}
+	// Check banned commands
+	//plugin.getLogger().info(Settings.visitorCommandBlockList.toString());
+	String[] args = e.getMessage().substring(1).toLowerCase().split(" ");
+	if (Settings.bannedCommandList.contains(args[0])) {
+	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission);
+	    e.setCancelled(true);
+	}
+    }
 }

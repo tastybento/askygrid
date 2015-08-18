@@ -23,8 +23,34 @@ import com.wasteofplastic.askygrid.PlayerCache;
  */
 public class Util {
     private static ASkyGrid plugin = ASkyGrid.getPlugin();
-    private static int debug = 0;
-
+    // Debug level. 1 = normal operation. 0 = no console output. 2 and above are for debugging.
+    private static int debug = 1;
+       
+    /**
+     * @return the debug
+     */
+    public static int getDebug() {
+        return debug;
+    }
+    /**
+     * @param debug the debug to set
+     */
+    public static void setDebug(int debug) {
+        Util.debug = debug;
+    }
+    /**
+     * General logger method
+     * @param level
+     * @param message
+     */
+    public static void logger(int level, String message) {
+	if (debug >= level) {
+	    if (level > 1) {
+		message = "DEBUG["+level+"]:" + message;
+	    }
+	    plugin.getLogger().info(message);
+	}
+    }
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
      * 
@@ -91,6 +117,9 @@ public class Util {
      */
     public static List<String> chop(ChatColor color, String longLine, int length) {
 	List<String> result = new ArrayList<String>();
+	if (longLine == null) {
+	    return result;
+	}
 	// int multiples = longLine.length() / length;
 	int i = 0;
 	for (i = 0; i < longLine.length(); i += length) {
@@ -280,19 +309,5 @@ public class Util {
 		returned.add(p.getName());
 	}
 	return returned;
-	}
-
-	/**
-	 * General logger method
-	 * @param level
-	 * @param message
-	 */
-	public static void logger(int level, String message) {
-	    if (debug >= level) {
-	        if (level > 1) {
-	    	message = "DEBUG["+level+"]:" + message;
-	        }
-	        plugin.getLogger().info(message);
-	    }
 	}
 }

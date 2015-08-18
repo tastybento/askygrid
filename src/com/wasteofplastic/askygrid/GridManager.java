@@ -3,8 +3,6 @@
  */
 package com.wasteofplastic.askygrid;
 
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
@@ -23,8 +21,6 @@ import org.bukkit.material.SimpleAttachableMaterialData;
 import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
-import com.wasteofplastic.askygrid.util.Util;
-
 /**
  * This class manages the island islandGrid. It knows where every island is, and
  * where new
@@ -35,8 +31,6 @@ import com.wasteofplastic.askygrid.util.Util;
  */
 public class GridManager {
     private ASkyGrid plugin;
-    // 2D Grid of claims, x first
-    private TreeMap<Integer, TreeMap<Integer, ClaimRegion>> claimGrid = new TreeMap<Integer, TreeMap<Integer, ClaimRegion>>();
 
     /**
      * @param plugin
@@ -354,199 +348,5 @@ public class GridManager {
 		}
 	    }
 	}
-    }
-
-    public boolean isClaims() {
-	if (claimGrid.isEmpty()) {
-	    return false;
-	}
-	return true;
-    }
-
-    /**
-     * Adds district to the grid using the stored information
-     * 
-     * @param districtSerialized
-     */
-    public ClaimRegion addClaimRegion(String world, String districtSerialized) {
-        // Format is ownerUUID}pos1x:pos1y:pos1z}pos2x:pos2y:pos2z
-        //plugin.getLogger().info("DEBUG: adding district " + districtSerialized);
-        // Split the string
-        String[] split = districtSerialized.split("}");
-        if (split.length == 3) {
-            try {
-        	UUID owner = UUID.fromString(split[0]);
-        	ClaimRegion newDistrictRegion = new ClaimRegion(plugin,Util.getLocationString(world + ":" + split[1]), owner);
-        	addToGrid(newDistrictRegion);
-        	return newDistrictRegion;
-            } catch (Exception e) {
-        	plugin.getLogger().severe("Could not process district in districts.yml, skipping...");
-        	plugin.getLogger().severe("Error: '"+districtSerialized +"'");
-            }    
-        }
-        return null;
-    }
-    
-    /**
-     * Adds a claim region
-     * @param loc
-     * @param owner
-     * @return
-     */
-    public ClaimRegion addClaimRegion(Location loc, UUID owner) {
-	ClaimRegion cr = new ClaimRegion(plugin, loc, owner);
-	// TODO: Need to check if it is overlapping
-	addToGrid(cr);
-	return cr;
-    }
-    
-    /**
-     * Adds the region to the grid and ownership list
-     * @param newDistrictRegion
-     */
-    public void addToGrid(ClaimRegion newDistrictRegion) {
-        plugin.getLogger().info("DEBUG: adding claim to grid");
-        if (claimGrid.containsKey(newDistrictRegion.getMinX())) {
-            //plugin.getLogger().info("DEBUG: min x is in the grid :" + newDistrictRegion.getMinX());
-            TreeMap<Integer, ClaimRegion> zEntry = claimGrid.get(newDistrictRegion.getMinX());
-            // Add district
-            zEntry.put(newDistrictRegion.getMinZ(), newDistrictRegion);
-            claimGrid.put(newDistrictRegion.getMinX(), zEntry);
-        } else {
-            // Add district
-            //plugin.getLogger().info("DEBUG: min x is not in the grid :" + newDistrictRegion.getMinX());
-            //plugin.getLogger().info("DEBUG: min Z is not in the grid :" + newDistrictRegion.getMinZ());
-            // X grid first
-            TreeMap<Integer, ClaimRegion> zEntry = new TreeMap<Integer, ClaimRegion>();
-            zEntry.put(newDistrictRegion.getMinZ(), newDistrictRegion);
-            claimGrid.put(newDistrictRegion.getMinX(), zEntry);
-        }
-    }
-
-    /**
-     * Removes the district from the grid and removes the owner
-     * from the ownership map
-     * @param district
-     */
-    public void deleteClaimRegion(ClaimRegion district) {
-        if (district != null) {
-            int x = district.getMinX();
-            int z = district.getMinZ();
-            // plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
-            if (claimGrid.containsKey(x)) {
-        	// plugin.getLogger().info("DEBUG: x found");
-        	TreeMap<Integer, ClaimRegion> zEntry = claimGrid.get(x);
-        	if (zEntry.containsKey(z)) {
-        	    // plugin.getLogger().info("DEBUG: z found - deleting the district");
-        	    // DistrictRegion exists - delete it
-        	    ClaimRegion deletedDistrictRegion = zEntry.get(z);
-        	    deletedDistrictRegion.setOwner(null);
-        	    zEntry.remove(z);
-        	    claimGrid.put(x, zEntry);
-        	} // else {
-        	// plugin.getLogger().info("DEBUG: could not find z");
-        	// }
-            }
-        }	
-    }
-
-    /**
-     * Removes the district at location loc from the grid and removes the player
-     * from the ownership map
-     * 
-     * @param loc
-     */
-    public void deleteClaimRegion(Location loc) {
-        plugin.getLogger().info("DEBUG: deleting claim at " + loc);
-        ClaimRegion district = getClaimRegionAt(loc);
-        deleteClaimRegion(district);
-    }
-
-    /**
-     * Determines if an district is at a location in this area
-     * location. Also checks if the spawn district is in this area.
-     * Used for creating new districts ONLY
-     * 
-     * @param loc
-     * @return true if found, otherwise false
-     */
-    public boolean claimAtLocation(final Location loc) {
-        if (loc == null) {
-            return true;
-        }
-        plugin.getLogger().info("DEBUG checking claimAtLocation for location " + loc.toString());
-        // Check the district grid
-        if (getClaimRegionAt(loc) != null) {
-            // This checks if loc is inside the district spawn radius too
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Returns the district at the x,z location or null if there is none
-     * 
-     * @param x
-     * @param z
-     * @return PlayerDistrictRegion or null
-     */
-    public ClaimRegion getClaimRegionAt(int x, int z) {
-        //
-        // Check xgrid
-        // Try excat values first
-        //int count = 0;
-        //plugin.getLogger().info("***************************************************");
-        //plugin.getLogger().info("DEBUG: get region at " + x + "," + z);
-        // Loop x search
-        int searchTerm = x;
-        Entry<Integer, TreeMap<Integer, ClaimRegion>> en = null;
-        do {
-            //count++;
-            //plugin.getLogger().info("DEBUG: Trying x = " + searchTerm); 
-            en = claimGrid.floorEntry(searchTerm);
-            if (en != null) {
-        	//plugin.getLogger().info("DEBUG: something found in x at " + en.getKey());
-        	int searchTermZ = z;
-        	Entry<Integer, ClaimRegion> ent = null;
-        	do {
-        	    //count++;
-        	    //plugin.getLogger().info("DEBUG: Trying z = " + searchTermZ); 
-        	    ent = en.getValue().floorEntry(searchTermZ);
-        	    if (ent != null) {
-        		// Check if in the district range
-        		ClaimRegion district = ent.getValue();
-        		//plugin.getLogger().info("DEBUG: x grid - z entry found");
-        		if (district.inDistrict(x, z)) {
-        		    //plugin.getLogger().info("DEBUG: Player is in district - x grid");
-        		    //plugin.getLogger().info("DEBUG: Player is in district with coords:" + district.getMinX()
-        			//    + "," + district.getMinZ() + " " + district.getMaxX() + "," + district.getMaxZ());
-        		    //plugin.getLogger().info("DEBUG: " + count);
-        		    //plugin.getLogger().info("DEBUG: in district!");
-        		    return district;
-        		} else {
-        		    //plugin.getLogger().info("DEBUG: Player is not in district with coords:" + district.getMinX()
-        		//	    + "," + district.getMinZ() + " " + district.getMaxX() + "," + district.getMaxZ());
-        		}
-        		// Try next lowest z
-        		searchTermZ = ent.getKey() - 1;
-        	    }
-        	} while (ent != null);
-        	// Try next lowest x
-        	searchTerm = en.getKey() - 1;
-            }
-        } while (en != null);
-        //plugin.getLogger().info("DEBUG: " + count);
-        //plugin.getLogger().info("DEBUG: not in district - grid manager");
-        return null;
-    }
-
-    /**
-     * Returns the district at the location or null if there is none
-     * 
-     * @param location
-     * @return PlayerDistrictRegion object
-     */
-    public ClaimRegion getClaimRegionAt(Location location) {
-        return getClaimRegionAt(location.getBlockX(), location.getBlockZ());
     }
 }

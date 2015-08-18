@@ -95,17 +95,20 @@ public class WorldStyles {
 	
 	private static BlockProbability netherP() {
 		BlockProbability p = new BlockProbability();
-		p.addBlock(11, 50);  //still lava
+		// Beware with glowstone and lava - the lighting calcs will lag the
+		// server badly if there are too many blocks.
+		p.addBlock(11, 5);  //still lava
 		p.addBlock(13, 30);  //gravel
 		p.addBlock(52, 2);   //mob spawner
 		p.addBlock(54, 1);   //chest
 		p.addBlock(87, 300); //netherack
 		p.addBlock(88, 100); //soulsand
-		p.addBlock(89, 50);  //glowstone
+		p.addBlock(89, 5);  //glowstone
 		p.addBlock(112, 30); //netherbrick
 		p.addBlock(113, 10); //nether fence
 		p.addBlock(114, 15); //nether stairs
 		p.addBlock(115, 30); //netherwart
+		p.addBlock(1, 15); //quartz ore (stone - will become quartz ore in the block populator
 		return p;
 	}
 	
@@ -126,6 +129,10 @@ public class WorldStyles {
 		s.add(EntityType.ENDERMAN);
 		s.add(EntityType.SILVERFISH);
 		s.add(EntityType.VILLAGER);
+		s.add(EntityType.RABBIT);
+		s.add(EntityType.GUARDIAN);
+		s.add(EntityType.HORSE);
+		s.add(EntityType.WITCH);
 		return s;
 	}
 	
@@ -134,6 +141,8 @@ public class WorldStyles {
 		s.add(EntityType.PIG_ZOMBIE);
 		s.add(EntityType.BLAZE);
 		s.add(EntityType.MAGMA_CUBE);
+		s.add(EntityType.SKELETON);
+		//s.add(EntityType.GHAST);
 		return s;
 	}
 	

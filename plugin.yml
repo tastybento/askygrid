@@ -20,7 +20,7 @@ commands:
         description: Game challenges
         aliases: [c, challenge, challenges]
         usage:  |  
-            /challenge
+            /challenges
 permissions:    
   askygrid.*:
     children:
@@ -41,17 +41,13 @@ permissions:
           askygrid.player.addwarp:
             description: Let the player place a Welcome warp sign
             default: true
-          askygrid.player.controlpanel:
-            description: Allows usage of the skygrid GUI
-            default: true
-          askygrid.player.settings:
-            description: Player can see server settings
-            default: true
           askygrid.player.lang:
             description: Player can select a language
             default: true
       askygrid.mod.*:
         children:
+          askygrid.mod.bannedcommands:
+            decription: Let a moderator use banned commands
           askygrid.mod.info:
             description: Let a moderator see info on a player
             default: op
@@ -63,9 +59,6 @@ permissions:
             default: op
           askygrid.mod.tp:
             description: Allows teleport to a player's home position
-            default: op
-          askygrid.mod.signadmin:
-            description: Enables warp sign admin commands
             default: op
       askygrid.admin.*:
         children:

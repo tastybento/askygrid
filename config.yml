@@ -25,54 +25,11 @@ general:
    # Players can trust other players with their space
    protectionRange: 20
 
-   ### Settings for the whole world
-   ### Players cannot customize these settings
-   # Allow lava or water flow into or out of a district
-   allowflowin: true
-   allowflowout: true
-   # Allow chests to be blown up by creepers or TNT
-   allowchestdamage: true
-   # Allow TNT damage
-   allowTNTdamage: true
-   #[true/false] PVP is allowed or denied.
-   allowPvP: true
-   # Allow players to throw enderpearls and teleport
-   allowenderpearls: true
-   
-   ### Default in-claim settings. Owners will be able to customize the settings
-   ### using the control panel
-   # Other players can break blocks or not or generally damage things
-   allowbreakblocks: false
-   # Other players can place blocks
-   allowplaceblocks: false
-   # Allow players to be able to sleep in beds not on their island
-   allowbeduse: false
-   # Allow players to use buckets, either fill or dump them
-   allowbucketuse: false
-   # Allow players to shear sheep
-   allowshearing: false
-   # Allow players to use doors or trapdoors. If a door is operated by a button or redstone, this does not count
-   allowdooruse: false
-   # Allow players to use levers or buttons
-   allowleverbuttonuse: false
-   # Allow players to trample crops
-   allowcroptrample: false
-   # Allow players to access chests of any kind, droppers, dispensers and hoppers
-   allowchestaccess: false
-   # Allow players to access furnaces
-   allowfurnaceuse: false
-   # Allow players to adjust diodes or comparators
-   allowredstone: false
-   # Allow players to use jukeboxes, eject discs and hit note blocks
-   allowmusic: false
-   # Allow players to use crafting benches
-   allowcrafting: true
-   # Allow players to use cauldrons and brewing stands
-   allowbrewing: false
-   # Allow gates to be used
-   allowgateuse: false
-   # Allow non-monster mobs to be hurt
-   allowhurtmobs: false
+   # Banned commands - these commands cannot be run by players in the world
+   # Bypass by Op or with the askygrid.mod.bannedcommands permission
+   # The spawner command should be banned otherwise chaos will ensue!
+   bannedcommands:
+   - spawner
    
    # Commands to execute when a player starts for the first time
    # Commands will be run as console. Use [player] to substitute the player's name

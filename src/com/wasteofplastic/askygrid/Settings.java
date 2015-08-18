@@ -118,4 +118,5 @@ public class Settings {
     public static int spawnHeight;
     public static boolean allowTNTDamage;
     public static boolean allowChestDamage;
+    public static List<String> bannedCommandList;
 }

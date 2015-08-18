@@ -10,6 +10,8 @@ public class BlockProbability {
 	TreeMap<Integer, Byte> p = new TreeMap<Integer, Byte>();
 	int total = 0;
 	
+	
+	
 	public void addBlock(int id, int prob) {
 		addBlock((byte) id, prob);
 	}
@@ -29,6 +31,7 @@ public class BlockProbability {
 	 * @param b
 	 * @return
 	 */
+	
 	public byte getBlock(Random random, boolean bottom, boolean b) {
 		byte temp = p.floorEntry(random.nextInt(total)).getValue();
 		if (bottom && temp == Material.CACTUS.getId()) {

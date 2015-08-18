@@ -26,15 +26,11 @@ import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.util.BlockIterator;
 
 import com.wasteofplastic.askygrid.ASkyGrid;
 import com.wasteofplastic.askygrid.GridManager;
@@ -101,10 +97,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " "
 			+ plugin.myLocale(player.getUniqueId()).adminHelpresetAllChallenges);
 	    }
-	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetsign:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetsign <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetSign);
-	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
 	    }
@@ -158,54 +150,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		return false;
 	    }
 	case 2:
-	    // Resetsign <player> - makes a warp sign for player
-	    if (split[0].equalsIgnoreCase("resetsign")) {
-		// Find the closest island
-		if (!(sender instanceof Player)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUseInGame);
-		    return true;
-		}
-		Player p = (Player) sender;
-		if (!VaultHelper.checkPerm(p, Settings.PERMPREFIX + "mod.signadmin") && !p.isOp()) {
-		    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).errorNoPermission);
-		    return true;
-		}
-		// Convert target name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-		} else {
-		    // Find out whether the player is looking at a warp sign
-		    // Look at what the player was looking at
-		    BlockIterator iter = new BlockIterator(p, 10);
-		    Block lastBlock = iter.next();
-		    while (iter.hasNext()) {
-			lastBlock = iter.next();
-			if (lastBlock.getType() == Material.AIR)
-			    continue;
-			break;
-		    }
-		    // Check if it is a sign
-		    if (!lastBlock.getType().equals(Material.SIGN_POST)) {
-			sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignNoSign);
-			return true;
-		    }
-		    Sign sign = (Sign) lastBlock.getState();
-		    sender.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignFound);
-		    // Find out if this player is allowed to have a sign on this island
-		    if (plugin.getWarpSignsListener().addWarp(playerUUID, lastBlock.getLocation())) {
-			// Change sign color to green
-			sign.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
-			sign.update();
-			p.sendMessage(ChatColor.GREEN + plugin.myLocale(p.getUniqueId()).adminResetSignRescued.replace("[name]", plugin.getPlayers().getName(playerUUID)));
-			return true;
-		    }
-		    // Warp already exists
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).adminResetSignErrorExists.replace("[name]", plugin.getWarpSignsListener().getWarpOwner(lastBlock.getLocation())));
-
-		}
-		return true;
-	    } else if (split[0].equalsIgnoreCase("resethome")) { 
+	    if (split[0].equalsIgnoreCase("resethome")) { 
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
 		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {

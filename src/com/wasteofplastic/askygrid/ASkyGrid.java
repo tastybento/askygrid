@@ -42,11 +42,10 @@ import com.wasteofplastic.askygrid.commands.AdminCmd;
 import com.wasteofplastic.askygrid.commands.Challenges;
 import com.wasteofplastic.askygrid.commands.SkyGridCmd;
 import com.wasteofplastic.askygrid.generators.SkyGridGen;
-import com.wasteofplastic.askygrid.listeners.GridGuard;
 import com.wasteofplastic.askygrid.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askygrid.listeners.NetherPortals;
 import com.wasteofplastic.askygrid.listeners.PlayerEvents;
-import com.wasteofplastic.askygrid.panels.ClaimsPanel;
+import com.wasteofplastic.askygrid.panels.ChallengePanel;
 import com.wasteofplastic.askygrid.panels.WarpPanel;
 import com.wasteofplastic.askygrid.util.VaultHelper;
 
@@ -87,9 +86,6 @@ public class ASkyGrid extends JavaPlugin {
     // Messages object
     private Messages messages;
     
-    // Claims panel
-    private ClaimsPanel claimsPanel;
-
     /**
      * Returns the World object for the grid world named in config.yml.
      * If the world does not exist then it is created.
@@ -255,8 +251,7 @@ public class ASkyGrid extends JavaPlugin {
 		    warpPanel = new WarpPanel(plugin);
 		    getServer().getPluginManager().registerEvents(warpPanel, plugin);
 		}
-		claimsPanel = new ClaimsPanel(plugin);
-		
+		getServer().getPluginManager().registerEvents(new ChallengePanel(plugin), plugin);
 		// econ
 		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
 		    // Check if the world generator is registered correctly
@@ -415,6 +410,8 @@ public class ASkyGrid extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("general.debug", 0);
+	// Banned commands
+	Settings.bannedCommandList = getConfig().getStringList("general.bannedcommands");
 	// Mute death messages
 	Settings.muteDeathMessages = getConfig().getBoolean("general.mutedeathmessages", false);
 	// Warp panel
@@ -549,8 +546,6 @@ public class ASkyGrid extends JavaPlugin {
 	// Enables warp signs in ASkyGrid
 	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
-	// Claim protection
-	manager.registerEvents(new GridGuard(this), this);
     }
 
 
@@ -686,9 +681,5 @@ public class ASkyGrid extends JavaPlugin {
      */
     public boolean isOnePointEight() {
 	return onePointEight;
-    }
-
-    public ClaimsPanel getClaimsPanel() {
-	return claimsPanel;
     }
 }
