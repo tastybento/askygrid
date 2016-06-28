@@ -159,10 +159,6 @@ public class ASkyGrid extends JavaPlugin {
 	    if (messages != null) {
 		messages.saveMessages();
 	    }
-	    // Close the name database
-	    if (tinyDB != null) {
-		tinyDB.closeDB();
-	    }
 	} catch (final Exception e) {
 	    getLogger().severe("Something went wrong saving files!");
 	    e.printStackTrace();
