@@ -6,9 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
+
+import com.wasteofplastic.askygrid.ASkyGrid;
 
 public class WorldStyles {
 	private static final Map<World.Environment, WorldStyles> map = 
@@ -49,66 +54,35 @@ public class WorldStyles {
 
 	private static BlockProbability normalP() {
 		BlockProbability p = new BlockProbability();
-		p.addBlock(1, 120);  //stone
-		p.addBlock(2, 80);   //grass
-		p.addBlock(3, 20);   //dirt
-		p.addBlock(9, 10);   //still water
-		p.addBlock(11, 5);   //still lava
-		p.addBlock(12, 20);  //sand
-		p.addBlock(13, 10);  //gravel
-		p.addBlock(14, 10);  //gold ore
-		p.addBlock(15, 20);  //iron ore
-		p.addBlock(16, 40);  //coal ore
-		p.addBlock(17, 100); //log
-		p.addBlock(18, 40);  //leaves
-		p.addBlock(20, 1);   //glass
-		p.addBlock(21, 5);   //lapis ore
-		p.addBlock(24, 10);  //sandstone
-		p.addBlock(29, 1);   //sticky piston
-		p.addBlock(30, 10);  //web
-		p.addBlock(31, 3);   //shrub
-		p.addBlock(32, 3);   //shrub
-		p.addBlock(33, 1);   //piston
-		p.addBlock(35, 25);  //wool
-		p.addBlock(37, 2);   //yellow flower
-		p.addBlock(38, 2);   //red flower
-		p.addBlock(39, 2);   //brown mushroom
-		p.addBlock(40, 2);   //red mushroom
-		p.addBlock(46, 2);   //TNT
-		p.addBlock(47, 3);   //bookshelves
-		p.addBlock(48, 5);   //mossy cobblestone
-		p.addBlock(49, 5);   //obsidian
-		p.addBlock(52, 2);   //spawner
-		p.addBlock(54, 1);   //chest
-		p.addBlock(56, 1);   //diamond ore
-		p.addBlock(73, 8);   //redstone ore
-		p.addBlock(79, 4);   //ice
-		p.addBlock(80, 8);   //snow
-		p.addBlock(81, 2);   //cactus *****
-		p.addBlock(82, 20);  //clay
-		p.addBlock(83, 15);  //reeds *****
-		p.addBlock(86, 5);   //pumpkin
-		p.addBlock(103, 5);  //melon
-		p.addBlock(110, 15); //mycelium
+		FileConfiguration config = ASkyGrid.getPlugin().getConfig();
+		int count = 0;
+		for (String material: config.getConfigurationSection("world.blocks").getValues(false).keySet()) {
+		    try {
+			Material blockMaterial = Material.valueOf(material.toUpperCase());
+			p.addBlock(blockMaterial, config.getInt("world.blocks." + material));
+			count++;
+		    } catch (Exception e) {
+			Bukkit.getLogger().info("Do not know what " + material + " is so skipping...");
+		    }
+		}
+		Bukkit.getLogger().info("Loaded " + count + " block types for ASkyGrid over world");
 		return p;
 	}
 	
 	private static BlockProbability netherP() {
 		BlockProbability p = new BlockProbability();
-		// Beware with glowstone and lava - the lighting calcs will lag the
-		// server badly if there are too many blocks.
-		p.addBlock(11, 5);  //still lava
-		p.addBlock(13, 30);  //gravel
-		p.addBlock(52, 2);   //mob spawner
-		p.addBlock(54, 1);   //chest
-		p.addBlock(87, 300); //netherack
-		p.addBlock(88, 100); //soulsand
-		p.addBlock(89, 5);  //glowstone
-		p.addBlock(112, 30); //netherbrick
-		p.addBlock(113, 10); //nether fence
-		p.addBlock(114, 15); //nether stairs
-		p.addBlock(115, 30); //netherwart
-		p.addBlock(1, 15); //quartz ore (stone - will become quartz ore in the block populator
+		FileConfiguration config = ASkyGrid.getPlugin().getConfig();
+		int count = 0;
+		for (String material: config.getConfigurationSection("world.netherblocks").getValues(false).keySet()) {
+		    try {
+			Material blockMaterial = Material.valueOf(material.toUpperCase());
+			p.addBlock(blockMaterial, config.getInt("world.netherblocks." + material));
+			count++;
+		    } catch (Exception e) {
+			Bukkit.getLogger().info("Do not know what " + material + " is so skipping...");
+		    }
+		}
+		Bukkit.getLogger().info("Loaded " + count + " block types for ASkyGrid nether");
 		return p;
 	}
 	

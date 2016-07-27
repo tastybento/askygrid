@@ -212,6 +212,9 @@ public class Locale {
     public String challengesguiTitle;
     public String helpColor;
     public String adminHelpinfoIsland;
+    public String islandSubTitleColor = "blue";
+    public String islandTitleColor = "red";
+    public String islandDonateColor = "gold";
 
     /**
      * Creates a locale object full of localized strings for a language

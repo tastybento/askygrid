@@ -136,3 +136,61 @@ general:
    # plugin config has been updated. If a new config is detected, it will be
    # auto-saved to config.new.yml.
    version: ${version}
+
+world:
+   blocks:
+     STONE: 120
+     GRASS: 80
+     DIRT: 20
+     STATIONARY_WATER: 10
+     STATIONARY_LAVA: 5
+     SAND: 20
+     GRAVEL: 10
+     GOLD_ORE: 10
+     IRON_ORE: 20
+     COAL: 40
+     LOG: 100
+     LEAVES: 40
+     GLASS: 1
+     LAPIS_ORE: 5
+     SANDSTONE: 10
+     PISTON_STICKY_BASE: 1
+     WEB: 10
+     DEAD_BUSH: 3
+     PISTON_BASE: 1
+     WOOL: 25
+     YELLOW_FLOWER: 2
+     BROWN_MUSHROOM: 2
+     RED_MUSHROOM: 2
+     TNT: 2
+     BOOKSHELF: 3
+     MOSSY_COBBLESTONE: 5
+     OBSIDIAN: 5
+     MOB_SPAWNER: 2
+     CHEST: 1
+     ENDER_CHEST: 1
+     DIAMOND_ORE: 1
+     REDSTONE_ORE: 8
+     ICE: 4
+     SNOW_BLOCK: 8
+     CACTUS: 2
+     CLAY: 20
+     SUGAR_CANE: 15
+     PUMPKIN: 5
+     MELON: 5
+     MYCEL: 15
+   netherblocks:
+   # Beware with glowstone and lava - the lighting calcs will lag the
+   # server badly if there are too many blocks.
+     STATIONARY_LAVA: 5
+     GRAVEL: 30
+     MOB_SPAWNER: 2
+     CHEST: 1
+     NETHERRACK: 300
+     SOUL_SAND: 100
+     GLOWSTONE: 1
+     NETHER_BRICK: 30
+     NETHER_FENCE: 10
+     NETHER_BRICK_STAIRS: 15
+     NETHER_WARTS: 30
+     QUARTZ_ORE: 15

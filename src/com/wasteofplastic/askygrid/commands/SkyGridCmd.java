@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -93,20 +94,27 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	    resetMoney(player);
 	}
 	// Show fancy titles!
-	if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
-	    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-		    "title " + player.getName() + " subtitle {text:\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", color:blue}");
-	}
-	if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
-	    plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-		    "title " + player.getName() + " title {text:\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", color:gold}");
-	}
-	if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
-	    plugin.getServer().dispatchCommand(
-		    plugin.getServer().getConsoleSender(),
-		    "tellraw " + player.getName() + " {text:\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",color:aqua" + ",clickEvent:{action:open_url,value:\""
-			    + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
-	}
+        // Show fancy titles!
+        if (!Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
+            if (!plugin.myLocale(player.getUniqueId()).islandSubTitle.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                        "title " + player.getName() + " subtitle {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandSubTitleColor + "\"}");
+            }
+            if (!plugin.myLocale(player.getUniqueId()).islandTitle.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
+                        "title " + player.getName() + " title {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandTitle + "\", \"color\":\"" + plugin.myLocale(player.getUniqueId()).islandTitleColor + "\"}");
+            }
+            if (!plugin.myLocale(player.getUniqueId()).islandDonate.isEmpty() && !plugin.myLocale(player.getUniqueId()).islandURL.isEmpty()) {
+                //plugin.getLogger().info("DEBUG: tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                //                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
+                plugin.getServer().dispatchCommand(
+                        plugin.getServer().getConsoleSender(),
+                        "tellraw " + player.getName() + " {\"text\":\"" + plugin.myLocale(player.getUniqueId()).islandDonate + "\",\"color\":\"" + plugin.myLocale(player.getUniqueId()).islandDonateColor + "\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\""
+                                + plugin.myLocale(player.getUniqueId()).islandURL + "\"}}");
+            }
+        }
 	// Run any commands that need to be run at the start
 	/*
 	if (firstTime) {
@@ -289,7 +297,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.GOLD + "General Public License along with this plugin.");
 		player.sendMessage(ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
 		player.sendMessage(ChatColor.GOLD + "Souce code is available on GitHub.");
-		player.sendMessage(ChatColor.GOLD + "(c) 2015 by tastybento");
+		player.sendMessage(ChatColor.GOLD + "(c) 2016 by tastybento");
 		return true;
 	    } else if (split[0].equalsIgnoreCase("warp")) {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
@@ -361,9 +369,6 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go <1 - " + maxHomes + ">: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
 		} else {
 		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " go: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).islandhelpTeleport);
-		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
-		    player.sendMessage(plugin.myLocale(player.getUniqueId()).helpColor + "/" + label + " controlpanel or cp: " + ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).helpControlPanel);
 		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.sethome")) {
 		    if (maxHomes > 1) {
@@ -617,7 +622,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 				    final Location actualWarp = new Location(warpSpot.getWorld(), warpSpot.getBlockX() + 0.5D, warpSpot.getBlockY(),
 					    warpSpot.getBlockZ() + 0.5D);
 				    player.teleport(actualWarp);
-				    player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+				    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
 				    return true;
 				}
 			    }
@@ -645,7 +650,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
 		inFront.getBlockZ() + 0.5D, yaw, 30F);
 	player.teleport(actualWarp);
-	player.getWorld().playSound(player.getLocation(), Sound.BAT_TAKEOFF, 1F, 1F);
+	player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 1F, 1F);
 	Player warpOwner = plugin.getServer().getPlayer(foundWarp);
 	if (warpOwner != null && !warpOwner.equals(player)) {
 	    warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
@@ -702,8 +707,6 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	    }
 	    options.add("about"); //No permission needed. :-) Indeed.
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.warp")) {
-		options.add("controlpanel");
-		options.add("cp");
 		options.add("warp");
 		options.add("warps");
 	    }

@@ -7,16 +7,11 @@ import org.bukkit.Material;
 
 public class BlockProbability {
 	
-	TreeMap<Integer, Byte> p = new TreeMap<Integer, Byte>();
+	TreeMap<Integer, Material> p = new TreeMap<Integer, Material>();
 	int total = 0;
 	
 	
-	
-	public void addBlock(int id, int prob) {
-		addBlock((byte) id, prob);
-	}
-	
-	public void addBlock(byte id, int prob) {
+	public void addBlock(Material id, int prob) {
 		p.put(total, id);
 		total += prob;
 	}
@@ -32,11 +27,11 @@ public class BlockProbability {
 	 * @return
 	 */
 	
-	public byte getBlock(Random random, boolean bottom, boolean b) {
-		byte temp = p.floorEntry(random.nextInt(total)).getValue();
-		if (bottom && temp == Material.CACTUS.getId()) {
+	public Material getBlock(Random random, boolean bottom, boolean b) {
+		Material temp = p.floorEntry(random.nextInt(total)).getValue();
+		if (bottom && temp == Material.CACTUS) {
 			return getBlock(random, bottom, b);
-		} else if (b && (temp == Material.STATIONARY_WATER.getId() || temp == Material.STATIONARY_LAVA.getId())) {
+		} else if (b && (temp == Material.STATIONARY_WATER || temp == Material.STATIONARY_LAVA)) {
 			return getBlock(random, bottom, b);
 		}
 		return temp;
