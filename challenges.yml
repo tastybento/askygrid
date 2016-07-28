@@ -85,7 +85,7 @@ challenges:
   challengeList:
     lavafinder:
       friendlyname: 'Lava Finder'
-      description: 'Collect one bucket of lava'
+      description: 'Create a bucket of lava'
       icon: LAVA_BUCKET
       level: 'Newbie'
       type: inventory
@@ -95,9 +95,9 @@ challenges:
       # If takeItems is true, the money will be removed, so you may want to give it
       # back in the reward.
       #requiredMoney: 10
-      takeItems: true
-      itemReward: 'BEDROCK:1'
-      rewardText: '1 block of bedrock - be careful where you put it!'
+      takeItems: false
+      itemReward: 'IRON_INGOT:3'
+      rewardText: '3 iron ingots!'
       #rewardcommands:
       #- kit tools [player]
       moneyReward: 10
@@ -123,13 +123,13 @@ challenges:
       # If takeItems is true, the money will be removed, so you may want to give it
       # back in the reward.
       #requiredMoney: 10
-      takeItems: true
-      itemReward: 'BEDROCK:2'
-      rewardText: '2 blocks of bedrock - be careful where you put them!'
+      takeItems: false
+      itemReward: 'SHEARS:1'
+      rewardText: 'A pair of shears!'
       #rewardcommands:
       #- kit tools [player]
       moneyReward: 10
-      expReward: 30
+      expReward: 40
       permissionReward: ''
       repeatable: false
     pigfinder:
@@ -150,7 +150,7 @@ challenges:
       #rewardcommands:
       #- kit tools [player]
       moneyReward: 10
-      expReward: 30
+      expReward: 40
       permissionReward: ''
       repeatable: false
     fleshseller:
@@ -161,9 +161,9 @@ challenges:
       type: collect
       requiredItems: 'ROTTEN_FLESH:32'
       takeItems: true
-      itemReward: ''
-      rewardText: ''
-      moneyReward: 10
+      itemReward: 'EMERALD:1'
+      rewardText: '1 Emerald!'
+      moneyReward: 0
       expReward: 0
       permissionReward: ''
       repeatable: true
@@ -262,12 +262,12 @@ challenges:
       friendlyname: 'Snow Play!'
       description: 'Build a snow golem'
       icon: SNOW_BALL
-      level: 'Advanced'
+      level: 'Acrobat'
       type: collect
       requiredItems: 'SNOWMAN:1'
       takeItems: false
-      itemReward: 'DIAMOND_SPADE:1'
-      rewardText: 'A diamond spade - get shoveling!'
+      itemReward: 'ELYTRA:1'
+      rewardText: 'Elytra! Fly baby, fly!'
       moneyReward: 300
       expReward: 300
       permissionReward: ''

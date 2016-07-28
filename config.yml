@@ -137,48 +137,54 @@ general:
    # auto-saved to config.new.yml.
    version: ${version}
 
+# List blocks. If the material cannot be placed, bedrock will be used.
 world:
    blocks:
-     STONE: 120
-     GRASS: 80
-     DIRT: 20
-     STATIONARY_WATER: 10
-     STATIONARY_LAVA: 5
-     SAND: 20
-     GRAVEL: 10
-     GOLD_ORE: 10
-     IRON_ORE: 20
-     COAL: 40
-     LOG: 100
-     LEAVES: 40
-     GLASS: 1
-     LAPIS_ORE: 5
-     SANDSTONE: 10
-     PISTON_STICKY_BASE: 1
-     WEB: 10
+     BOOKSHELF: 3
+     BROWN_MUSHROOM: 2
+     CACTUS: 10
+     CHEST: 1
+     CLAY: 2
+     COAL_ORE: 20
      DEAD_BUSH: 3
+     DIAMOND_ORE: 1
+     DIRT: 10
+     DOUBLE_PLANT: 10
+     ENDER_CHEST: 1
+     GLASS: 1
+     GOLD_ORE: 10
+     GRASS: 60
+     GRAVEL: 10
+     ICE: 4
+     IRON_ORE: 20
+     LAPIS_ORE: 5
+     LEAVES: 30
+     LOG: 40
+     LONG_GRASS: 10
+     MELON: 5
+     MOB_SPAWNER: 2
+     MOSSY_COBBLESTONE: 5
+     MYCEL: 15
+     OBSIDIAN: 5
      PISTON_BASE: 1
+     PISTON_STICKY_BASE: 1
+     PUMPKIN: 5
+     PRISMARINE: 1
+     RED_ROSE: 10
+     RED_MUSHROOM: 2
+     REDSTONE_ORE: 8
+     SAND: 20
+     SANDSTONE: 10
+     SEA_LANTERN: 1
+     SNOW_BLOCK: 8
+     STATIONARY_LAVA: 5
+     STATIONARY_WATER: 10
+     STONE: 120
+     SUGAR_CANE_BLOCK: 5
+     TNT: 2
+     WEB: 10
      WOOL: 25
      YELLOW_FLOWER: 2
-     BROWN_MUSHROOM: 2
-     RED_MUSHROOM: 2
-     TNT: 2
-     BOOKSHELF: 3
-     MOSSY_COBBLESTONE: 5
-     OBSIDIAN: 5
-     MOB_SPAWNER: 2
-     CHEST: 1
-     ENDER_CHEST: 1
-     DIAMOND_ORE: 1
-     REDSTONE_ORE: 8
-     ICE: 4
-     SNOW_BLOCK: 8
-     CACTUS: 2
-     CLAY: 20
-     SUGAR_CANE: 15
-     PUMPKIN: 5
-     MELON: 5
-     MYCEL: 15
    netherblocks:
    # Beware with glowstone and lava - the lighting calcs will lag the
    # server badly if there are too many blocks.

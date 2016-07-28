@@ -143,8 +143,8 @@ public class TinyDB {
                     };
                     int count = 0;
                     for (final File file : plugin.getPlayersFolder().listFiles(ymlFilter)) {
-                        if (count % 1000 == 0) {
-                            System.out.println("[ASkyBlock]: Processed " + count + " names to database");
+                        if (count > 0 && count % 1000 == 0) {
+                            System.out.println("[ASkyGrid]: Processed " + count + " names to database");
                         }
                         count++;
                         try {

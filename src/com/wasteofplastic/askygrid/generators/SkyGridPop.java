@@ -4,11 +4,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
@@ -20,7 +22,11 @@ import org.bukkit.inventory.ItemStack;
 public class SkyGridPop extends BlockPopulator {
     private static RandomSeries slt = new RandomSeries(27);
     private final int size;
+    private final static boolean DEBUG = false;
 
+    /**
+     * @param size
+     */
     public SkyGridPop(int size) {
 	this.size = size;
     }
@@ -28,24 +34,50 @@ public class SkyGridPop extends BlockPopulator {
     @SuppressWarnings("deprecation")
     @Override
     public void populate(World world, Random random, Chunk chunk) {
+	if (DEBUG)
+	    Bukkit.getLogger().info("DEBUG: populate chunk");
 	for (int x = 0; x < 16; x += 4) {
-	    for (int y = 0; y < size; y +=4) {
+	    for (int y = 0; y < size; y += 4) {
 		for (int z = 0; z < 16; z +=4) {
 		    Block b = chunk.getBlock(x, y, z);
-		    // Set chests and spawners
-		    if (b.getType().equals(Material.CHEST)) {
+		    if (b.getType().equals(Material.AIR))
+			continue;
+		    // Alter blocks
+		    switch (b.getType()) {
+		    case CHEST:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: chest");
 			setChest(b, random);
-		    } else if (b.getType().equals(Material.MOB_SPAWNER)) {
+			break;
+		    case MOB_SPAWNER:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: mob spawner");
 			setSpawner(b, random);
-		    } else if (b.getType().equals(Material.STONE)) {
-			b.setData((byte)random.nextInt(7));
-		    } else if (b.getType().equals(Material.DIRT)) {
+			break;
+		    case STONE:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: stone");
+			double type = random.nextDouble();
+			if (type < 0.1) {
+			    b.setData((byte)1); // Granite 
+			} else if (type < 0.2) {
+			    b.setData((byte)3); // Diorite 
+			} else if (type < 0.3) {
+			    b.setData((byte)5); // Andesite
+			}
+			break;
+		    case DIRT:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DIRT");
 			b.setData((byte)random.nextInt(3));
-		    } else if (b.getType().equals(Material.STONE)) {
-			b.setData((byte)random.nextInt(7));
-		    } else if (b.getType().equals(Material.SAND)) {
+			break;
+		    case SAND:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG SAND");
 			b.setData((byte)random.nextInt(2));
-		    } else if (b.getType().equals(Material.LOG)) {
+		    case LOG:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: LOG");
 			int r = random.nextInt(6);
 			if (r < 4) {
 			    b.setData((byte)r);
@@ -53,20 +85,41 @@ public class SkyGridPop extends BlockPopulator {
 			    b.setType(Material.LOG_2);
 			    b.setData((byte)random.nextInt(2));
 			}
-		    } else if (b.getType().equals(Material.LONG_GRASS)) {
-			b.setData((byte)random.nextInt(3));
-		    } else if (b.getType().equals(Material.STONE)) {
-			b.setData((byte)random.nextInt(7));
-		    } else if (b.getType().equals(Material.RED_ROSE)) {
-			b.setData((byte)random.nextInt(9));
-		    } else if (b.getType().equals(Material.LEAVES)) {
-			int r = random.nextInt(6);
-			if (r < 4) {
-			    b.setData((byte)r);
+			break;
+		    case LEAVES:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: leaves");
+			int ra = random.nextInt(6);
+			if (ra < 4) {
+			    b.setData((byte)ra);
 			} else {
 			    b.setType(Material.LEAVES_2);
 			    b.setData((byte)random.nextInt(2));
 			}
+			break;
+		    default:
+			break;
+		    }
+		    // Check blocks above the block
+		    switch (b.getRelative(BlockFace.UP).getType()) {
+		    case LONG_GRASS:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: LONG grass");
+			b.getRelative(BlockFace.UP).setData((byte)random.nextInt(3));
+			break;
+		    case RED_ROSE:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: red rose");
+			b.getRelative(BlockFace.UP).setData((byte)random.nextInt(9));
+			break;
+		    case DOUBLE_PLANT:
+			if (DEBUG)
+			    Bukkit.getLogger().info("DEBUG: Double plant");
+			    b.getRelative(BlockFace.UP).setData((byte)random.nextInt(6));
+			    b.getRelative(BlockFace.UP).getRelative(BlockFace.UP).setData((byte)8);
+			break;
+		    default:
+			break;
 		    }
 		    // Nether
 		    if (b.getWorld().getEnvironment().equals(Environment.NETHER)) {
@@ -126,7 +179,7 @@ public class SkyGridPop extends BlockPopulator {
 
 	if (random.nextDouble() < 0.1)
 	    set.add(new ItemStack(383, 1, (short) 120)); //villager spawn egg
-	
+
 	if (random.nextDouble() < 0.1)
 	    set.add(new ItemStack(383, 1, (short) 100)); //horse spawn egg
 

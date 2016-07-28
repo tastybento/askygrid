@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,55 +15,53 @@ import org.bukkit.generator.ChunkGenerator;
 import com.wasteofplastic.askygrid.Settings;
 
 public class SkyGridGen extends ChunkGenerator {
-    private final int size;
-    // blocks that need to be placed on dirt
-    // Material.SAPLING, Material.RED_MUSHROOM, Material.BROWN_MUSHROOM,
-    // Material.SUGAR_CANE, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE
+    // Blocks that need to be placed on dirt
     private final static List<Material> needDirt = Arrays.asList(Material.SAPLING, Material.RED_MUSHROOM, Material.BROWN_MUSHROOM,
-	    Material.SUGAR_CANE, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE);
-    
-    public SkyGridGen() {
-	this(Settings.gridHeight);
-    }
+	    Material.SUGAR_CANE_BLOCK, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.DOUBLE_PLANT);
 
-    public SkyGridGen(int size) {
-	this.size = size;
-    }
-    
     @Override
     public byte[][] generateBlockSections(World world, Random random, int chunkx, int chunkz, BiomeGrid biomes) {
-
-	Material blockid = Material.AIR;
+	// Default block
+	Material blockMat = Material.AIR;
 	// This gets all the blocks that can be picked and their probabilities
-	BlockProbability p = WorldStyles.get(world.getEnvironment()).getP();
-	int vsegs = world.getMaxHeight() / 16;
-	byte[][] chunk = new byte[vsegs][];
-	    for (int x = 0; x < 16; x += 4) {
-		for (int z = 0; z < 16; z += 4) {
-		    for (int y = 0; y < size; y += 4) {
-			// Get a random block and feed in the last block (true if cactus or cane)
-			blockid = p.getBlock(random, y == 0, blockid == Material.CACTUS || blockid == Material.SUGAR_CANE);
-			// Check if the block needs dirt
-			if (needDirt.contains(blockid)) {
-			    // Add dirt
-			    setBlock(chunk, x, y, z, Material.DIRT); //dirt
-			    setBlock(chunk, x, y+1, z, blockid);
-			    if (blockid == Material.SUGAR_CANE) //reeds
-				setBlock(chunk, x+1, y, z, Material.STATIONARY_WATER); //still water
-			} else if (blockid == Material.CACTUS) { //cactus
-			    setBlock(chunk, x, y, z, Material.SAND); //sand
-			    setBlock(chunk, x, y-1, z, Material.VINE); //vines
-			    setBlock(chunk, x, y+1, z, blockid);
-			} else if (blockid == Material.NETHER_WARTS) { //netherwart
-			    setBlock(chunk, x, y, z, Material.SOUL_SAND); //soul sand
-			    setBlock(chunk, x, y+1, z, blockid);
-			} else {
-			    setBlock(chunk, x, y, z, blockid);
+	BlockProbability prob = WorldStyles.get(world.getEnvironment()).getProb();
+	// The chunk we are making
+	byte[][] chunk = new byte[world.getMaxHeight() / 16][];
+	for (int x = 0; x < 16; x += 4) {
+	    for (int z = 0; z < 16; z += 4) {
+		for (int y = 0; y < Settings.gridHeight; y += 4) {
+		    // Get a random block and feed in the last block (true if cactus or cane)
+		    blockMat = prob.getBlock(random, y == 0, blockMat == Material.CACTUS || blockMat == Material.SUGAR_CANE_BLOCK);
+		    // Check if the block needs dirt
+		    if (needDirt.contains(blockMat)) {
+			// Add dirt
+			setBlock(chunk, x, y, z, Material.DIRT);
+			setBlock(chunk, x, y+1, z, blockMat);
+			
+			if (blockMat.equals(Material.SUGAR_CANE_BLOCK)) {
+			    //Bukkit.getLogger().info("DEBUG: sugar cane - result of random selection = " + blockMat + " " + (chunkx*16+x) + " " + y + " " + (chunkz*16+z));
+			    setBlock(chunk, x+1, y, z, Material.STATIONARY_WATER);
+			} else if (blockMat.equals(Material.DOUBLE_PLANT)) {
+			    setBlock(chunk, x, y+2, z, blockMat);
 			}
+		    } else if (blockMat.equals(Material.CACTUS)) {
+			//Bukkit.getLogger().info("DEBUG: cactus - result of random selection = " + blockMat + " " + (chunkx*16+x) + " " + y + " " + (chunkz*16+z));
+
+			setBlock(chunk, x, y, z, Material.SAND);
+			setBlock(chunk, x, y-1, z, Material.VINE);
+			setBlock(chunk, x, y+1, z, blockMat);
+		    } else if (blockMat.equals(Material.NETHER_WARTS)) {
+			//Bukkit.getLogger().info("DEBUG: nether warts - result of random selection = " + blockMat + " " + (chunkx*16+x) + " " + y + " " + (chunkz*16+z));
+
+			setBlock(chunk, x, y, z, Material.SOUL_SAND);
+			setBlock(chunk, x, y+1, z, blockMat);
+		    } else {
+			setBlock(chunk, x, y, z, blockMat);
 		    }
 		}
 	    }
-	    return chunk;
+	}
+	return chunk;
     }
 
     @SuppressWarnings("deprecation")
@@ -80,16 +79,16 @@ public class SkyGridGen extends ChunkGenerator {
     public List<BlockPopulator> getDefaultPopulators(World world) {
 	//return Arrays.asList(new BlockPopulator[0]);
 	List<BlockPopulator> list = new ArrayList<BlockPopulator>(1);
-	list.add(new SkyGridPop(size));
+	list.add(new SkyGridPop(Settings.gridHeight));
 	return list;
     }
-    
-    
+
+
 
     @Override
     public Location getFixedSpawnLocation(World world, Random random) {
 	//Bukkit.getLogger().info("DEBUG: fixed spawn loc requested");
-	return new Location(world, 0, size + 2, 0);
+	return new Location(world, 0, Settings.gridHeight + 2, 0);
     }
 
 }
