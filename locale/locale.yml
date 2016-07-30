@@ -16,6 +16,7 @@ adminHelp:
 adminInfo: 
   lastLogin: "Last login"
   player: "Player"
+  homeLocation: "Home Location"
 adminSetHome: 
   homeSet: "Home set to [location]"
   noneFound: "No safe location found!"
@@ -66,7 +67,7 @@ grid:
   donate: "Welcome to ASkyGrid by tastybento"
   errorInvalidPlayer: "That player is unknown!"
   errorYouDoNotHavePermission: "You do not have permission to use that command!"
-  helpChallenges: "/challenges: &fshow challenges"
+  helpChallenges: "/asgc: &fshow challenges"
   helpColor: "&e"
   helpStart: "start, or teleport to your home."
   helpSetHome: "set your home teleport point."

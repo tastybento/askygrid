@@ -95,22 +95,22 @@ challenges:
       # If takeItems is true, the money will be removed, so you may want to give it
       # back in the reward.
       #requiredMoney: 10
-      takeItems: false
-      itemReward: 'IRON_INGOT:3'
-      rewardText: '3 iron ingots!'
-      #rewardcommands:
-      #- kit tools [player]
+      takeItems: true
+      itemReward: ''
+      rewardText: 'A irritating stick'
+      rewardcommands:
+      - "give [player] stick 1 0 {display:{Name:\"Irritating Stick\"},ench:[{id:16,lvl:5},{id:19,lvl:2}]}"
       moneyReward: 10
       expReward: 30
       permissionReward: ''
       repeatable: true
-      repeatItemReward: 'BEDROCK:1'
-      repeatRewardText: '1 block of bedrock - be careful where you put it!'
+      repeatItemReward: 'OBSIDIAN:3'
+      repeatRewardText: '3 blocks of obsidian!'
       repeatMoneyReward: 5
       repeatExpReward: 10
       #repeatrewardcommands:
       # Max times limits how many times a challenge can be done. Comment out to make unlimited
-      maxtimes: 2
+      maxtimes: 20
     sheepfinder:
       friendlyname: 'BaaBaa'
       description: 'Find a sheep!'
@@ -145,10 +145,10 @@ challenges:
       # back in the reward.
       #requiredMoney: 10
       takeItems: true
-      itemReward: 'BEDROCK:2'
-      rewardText: '2 blocks of bedrock - be careful where you put them!'
-      #rewardcommands:
-      #- kit tools [player]
+      itemReward: ''
+      rewardText: 'The Fishing Rod of Destiny!'
+      rewardcommands:
+      - "give [player] rod 1 0 {display:{Name:\"Rod of Destiny\"},ench:[{id:61,lvl:5},{id:62,lvl:2}]}"
       moneyReward: 10
       expReward: 40
       permissionReward: ''
@@ -158,7 +158,7 @@ challenges:
       description: 'Sell your zombie flesh! 32 pieces required'
       icon: ROTTEN_FLESH
       level: 'Newbie'
-      type: collect
+      type: inventory
       requiredItems: 'ROTTEN_FLESH:32'
       takeItems: true
       itemReward: 'EMERALD:1'
@@ -177,7 +177,7 @@ challenges:
       description: 'Collect 10 blocks of TNT'
       icon: TNT
       level: 'Newbie'
-      type: collect
+      type: inventory
       requiredItems: 'TNT:10'
       takeItems: true
       itemReward: 'INK_SACK:3:1 MILK_BUCKET:1 COAL:1 FURNACE:1'

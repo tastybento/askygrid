@@ -306,7 +306,7 @@ public class GridManager {
     public void homeSet(Player player, int number) {
 	// Check if player is in their home world
 	if (!player.getWorld().equals(ASkyGrid.getGridWorld())) {
-	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).setHomeerrorNotOnIsland);
+	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 	    return; 
 	}
 	plugin.getPlayers().setHomeLocation(player.getUniqueId(), player.getLocation(), number);

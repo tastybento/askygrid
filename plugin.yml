@@ -2,7 +2,7 @@ name: ASkyGrid
 main: com.wasteofplastic.askygrid.ASkyGrid
 version: ${version}
 description: A SkyGrid Plugin
-author: Tastybento
+author: tastybento
 depend: [Vault]
 load: startup
 loadbefore: [Multiverse-Core]
@@ -20,7 +20,7 @@ commands:
         description: Game challenges
         aliases: [c, challenge, challenges]
         usage:  |  
-            /challenges
+            /asgc
 permissions:    
   askygrid.*:
     children:
@@ -40,9 +40,6 @@ permissions:
             default: true
           askygrid.player.addwarp:
             description: Let the player place a Welcome warp sign
-            default: true
-          askygrid.player.lang:
-            description: Player can select a language
             default: true
       askygrid.mod.*:
         children:

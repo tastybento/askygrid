@@ -160,7 +160,7 @@ public class PlayerEvents implements Listener {
 	// e.getMessage().substring(1).toLowerCase() + "'");
 	if (isFalling(e.getPlayer().getUniqueId()) && Settings.fallingCommandBlockList.contains(e.getMessage().substring(1).toLowerCase())) {
 	    // Sorry you are going to die
-	    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
+	    e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).gridcannotTeleport);
 	    e.setCancelled(true);
 	}
     }
@@ -189,7 +189,7 @@ public class PlayerEvents implements Listener {
 	    if (isFalling(e.getPlayer().getUniqueId())) {
 		//plugin.getLogger().info("DEBUG: player is falling");
 		// Sorry you are going to die
-		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).islandcannotTeleport);
+		e.getPlayer().sendMessage(plugin.myLocale(e.getPlayer().getUniqueId()).gridcannotTeleport);
 		e.setCancelled(true);
 		// Check if the player is in the void and kill them just in case
 		if (e.getPlayer().getLocation().getBlockY() < 0) {

@@ -68,8 +68,6 @@ public class Locale {
 
     // sethome
     public String setHomehomeSet;
-    public String setHomeerrorNotOnIsland;
-    public String setHomeerrorNoIsland;
 
     // Challenges
     public String challengesyouHaveCompleted;
@@ -97,64 +95,33 @@ public class Locale {
     public String challengesyouHaveNotUnlocked;
     public String challengesunknownChallenge;
     public String challengeserrorNotEnoughItems;
-    public String challengeserrorNotOnIsland;
     public String challengeserrorNotCloseEnough;
     public String challengeserrorItemsNotThere;
-    public String challengeserrorIslandLevel;
     public String challengeserrorYouAreMissing;
-
-    // /island
     public String homeTeleport;
     public String newPlayer;
     public String errorYouDoNotHavePermission;
 
-    // /island help
-    // /island
     public String help;
-    // island cp
-    public String helpControlPanel;
-    // /island restart
-    public String islandhelpRestart;
-    // /island sethome
+   // /island sethome
     public String helpSetHome;
     // /island warps;
-    public String islandhelpWarps;
+    public String gridhelpWarps;
     // /island warp <player>
-    public String islandhelpWarp;
-    public String islanderrorInvalidPlayer;
-    // Spawn
-    public String islandhelpSpawn;
+    public String gridhelpWarp;
+    public String griderrorInvalidPlayer;
     // Teleport go
-    public String islandhelpTeleport;
-
-    // ////////////////////////////////////
-    // /island commands //
-    // ////////////////////////////////////
-
-
-    // //////////////////////////////////////////////////////////////
-    // Admin commands that use /acid //
-    // //////////////////////////////////////////////////////////////
-
+    public String gridhelpTeleport;
     // Help
     public String adminHelpHelp;
     public String adminHelpreload;
-    // /acid delete <player>;
     public String adminHelpdelete;
-    // /acid completechallenge <challengename> <player>
     public String adminHelpcompleteChallenge;
-    // /acid resetchallenge <challengename> <player>
     public String adminHelpresetChallenge;
-    // /acid resetallchallenges <player>;
     public String adminHelpresetAllChallenges;
-    // /acid info <player>;
     public String adminHelpinfo;
-
     public String adminHelptp;
-
-    // acid reload
     public String reloadconfigReloaded;
-    // delete
     public String deleteremoving;
 
     // info
@@ -176,16 +143,16 @@ public class Locale {
 
 
     public String errorWrongWorld;
-    public String islandcannotTeleport;
+    public String gridcannotTeleport;
     public String prefix;
     // Titles
-    public String islandSubTitle;
-    public String islandTitle;
-    public String islandDonate;
-    public String islandURL;
+    public String gridSubTitle;
+    public String gridTitle;
+    public String gridDonate;
+    public String gridURL;
     public String challengeserrorRewardProblem;
     public String challengesNavigation;
-    public String islandHelpChallenges;
+    public String gridHelpChallenges;
     public String challengesmaxreached;
     public String challengescompletedtimes;
     public String targetInNoPVPArea;
@@ -198,23 +165,20 @@ public class Locale {
     public String errorUseInGame;
     public String adminInfotitle;
     public String adminInfounowned;
-    public String adminDeleteIslandnoid;
-    public String adminDeleteIslanduse;
     public String adminHelpResetHome;
     public String adminHelpSetHome;
     public String adminSetHomeNoneFound;
     public String adminSetHomeHomeSet;
-    public String adminSetHomeNotOnPlayersIsland;
     public String adminTpManualWarp;
     public String adminInfoPlayer;
     public String adminInfoLastLogin;
 
     public String challengesguiTitle;
     public String helpColor;
-    public String adminHelpinfoIsland;
-    public String islandSubTitleColor = "blue";
-    public String islandTitleColor = "red";
-    public String islandDonateColor = "gold";
+    public String adminHelpinfoPlayer;
+    public String gridSubTitleColor = "blue";
+    public String gridTitleColor = "red";
+    public String gridDonateColor = "gold";
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -290,7 +254,6 @@ public class Locale {
 	errorUnknownPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("error.unknownPlayer", "That player is unknown."));
 	errorNoPermission = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("error.noPermission", "You don't have permission to use that command!"));
-	// "You must be on your island to use this command."
 	errorCommandNotReady = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("error.commandNotReady", "You can't use that command right now."));
 	errorOfflinePlayer = ChatColor.translateAlternateColorCodes('&',
@@ -310,8 +273,6 @@ public class Locale {
 		locale.getString("warps.errorNoRemove", "You can only remove your own Welcome Sign!"));
 	warpserrorNoPerm = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorNoPerm", "You do not have permission to place Welcome Signs yet!"));
-	warpserrorNoPlace = ChatColor.translateAlternateColorCodes('&',
-		locale.getString("warps.errorNoPlace", "You must be on your island to place a Welcome Sign!"));
 	warpserrorDuplicate = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorDuplicate", "Sorry! There is a sign already in that location!"));
 	warpserrorDoesNotExist = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.errorDoesNotExist", "That warp doesn't exist!"));
@@ -324,10 +285,10 @@ public class Locale {
 	warpserrorNoWarpsYet = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorNoWarpsYet", "There are no warps available yet!"));
 	warpswarpsAvailable = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.warpsAvailable", "The following warps are available"));
-	warpsPlayerWarped = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.playerWarped", "[name] &2warped to your island!"));
+	warpsPlayerWarped = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.playerWarped", "[name] &2warped to your sign!"));
 	warpsPrevious = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.previous", "Previous"));
 	warpsNext = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.next", "Next"));
-	warpsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.title", "Island warps"));
+	warpsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.title", "ASkyGrid warps"));
 	setHomehomeSet = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("sethome.homeSet", "Your home has been set to your current location."));
 	setHomeerrorNumHomes = ChatColor.translateAlternateColorCodes('&',
@@ -371,7 +332,7 @@ public class Locale {
 	challengeserrorNotCloseEnough = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("challenges.errorNotCloseEnough", "You must be standing within 10 blocks of all required items."));
 	challengeserrorItemsNotThere = ChatColor.translateAlternateColorCodes('&',
-		locale.getString("challenges.errorItemsNotThere", "All required items must be close to you on your island!"));
+		locale.getString("challenges.errorItemsNotThere", "All required items must be within 10 blocks of you!"));
 	challengeserrorRewardProblem = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("challenges.errorRewardProblem", "There was a problem giving your reward. Ask Admin to check log!"));
 	challengesguiTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.guititle", "Challenges"));
@@ -384,27 +345,24 @@ public class Locale {
 		locale.getString("challenges.maxreached", "Max reached [donetimes] out of [maxtimes]"));
 	homeTeleport = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("grid.teleport", "Teleporting home."));
-	islandcannotTeleport = ChatColor.translateAlternateColorCodes('&',
+	gridcannotTeleport = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("grid.cannotTeleport", "You cannot teleport when falling!"));
 	newPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.new", "Your adventure begins!"));
-	islandSubTitle = locale.getString("grid.subtitle", "by tastybento");
-	islandDonate = locale.getString("grid.donate", "ASkyGrid by tastybento");
-	islandTitle = locale.getString("grid.title", "ASkyGrid");
-	islandURL = locale.getString("grid.url", "");
+	gridSubTitle = locale.getString("grid.subtitle", "by tastybento");
+	gridDonate = locale.getString("grid.donate", "ASkyGrid by tastybento");
+	gridTitle = locale.getString("grid.title", "ASkyGrid");
+	gridURL = locale.getString("grid.url", "");
 	errorYouDoNotHavePermission = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("grid.errorYouDoNotHavePermission", "You do not have permission to use that command!"));
 	help = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("grid.helpStart", "start, or teleport home."));
-	islandhelpTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpTeleport", "teleport home."));
-	helpControlPanel = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpControlPanel", "open the island GUI."));
-	islandhelpRestart = ChatColor.translateAlternateColorCodes('&',
-		locale.getString("grid.helpRestart", "restart your island and remove the old one."));
+	gridhelpTeleport = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpTeleport", "teleport home."));
 	helpSetHome = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpSetHome", "set home."));
-	islandhelpWarps = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpWarps", "Lists all available welcome-sign warps."));
-	islandhelpWarp = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpWarp", "Warp to <player>'s welcome sign."));
-	islandHelpChallenges = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpChallenges", "/challenges: &fshow challenges"));
+	gridhelpWarps = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpWarps", "Lists all available welcome-sign warps."));
+	gridhelpWarp = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpWarp", "Warp to <player>'s welcome sign."));
+	gridHelpChallenges = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpChallenges", "/asgc: &fshow challenges"));
 	adminHelpHelp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.help", "Admin Commands:"));
-	islanderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
+	griderrorInvalidPlayer = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("grid.errorInvalidPlayer", "That player is invalid!"));
 	adminHelpreload = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.reload", "reload configuration from file."));
 	adminHelpdelete = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.delete", "delete a player"));
@@ -418,7 +376,7 @@ public class Locale {
 	adminHelptp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.tp", "Teleport to a player's home."));
 	reloadconfigReloaded = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("reload.configReloaded", "Configuration reloaded from file."));
-	adminInfoHomeLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Home Location"));
+	adminInfoHomeLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.homeLocation", "Home Location"));
 	resetChallengessuccess = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("resetallchallenges.success", "[name] has had all challenges reset."));
 	completeChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
@@ -428,7 +386,6 @@ public class Locale {
 	resetChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("resetchallenge.errorChallengeDoesNotExist", "[challengename] has been reset for [name]"));
 	deleteremoving = ChatColor.translateAlternateColorCodes('&', locale.getString("delete.removing", "Removing [name]."));
-	adminInfoHomeLocation = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.islandLocation", "Island Location"));
 	resetChallengessuccess = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("resetallchallenges.success", "[name] has had all challenges reset."));
 	completeChallengeerrorChallengeDoesNotExist = ChatColor.translateAlternateColorCodes('&',
@@ -444,12 +401,11 @@ public class Locale {
 	adminHelpSetHome = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resethome", "Sets player's home to your position"));
 	adminSetHomeNoneFound = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.noneFound", "No safe location found!"));
 	adminSetHomeHomeSet = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.homeSet", "Home set to [location]"));
-	adminSetHomeNotOnPlayersIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.notOnPlayersIsland", "You are not on the player's island"));
 	adminTpManualWarp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminTp.manualWarp", "No safe spot found. Manually warp to somewhere near [location]."));
 	adminInfoPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.player","Player"));
 	adminInfoLastLogin = ChatColor.translateAlternateColorCodes('&', locale.getString("adminInfo.lastLogin","Last Login"));
 	challengesguiTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("challenges.guititle","ASkyGrid Challenges"));
 	helpColor = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpcolor","&e"));
-	adminHelpinfoIsland = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.info","info for the given player"));
+	adminHelpinfoPlayer = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.info","info for the given player"));
     }
 }
