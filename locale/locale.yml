@@ -9,6 +9,8 @@ adminHelp:
   completeChallenge: "marks a challenge as complete"
   help: "Admin Commands:"
   info: "info for the given player"
+  setHome: "Set player's home to your position"
+  resetHome: "Set player's home to a safe position"
   reload: "reload configuration from file."
   resetAllChallenges: "resets all of the player's challenges"
   resetChallenge: "marks a challenge as incomplete"

@@ -165,7 +165,6 @@ public class Locale {
     public String errorUseInGame;
     public String adminInfotitle;
     public String adminInfounowned;
-    public String adminHelpResetHome;
     public String adminHelpSetHome;
     public String adminSetHomeNoneFound;
     public String adminSetHomeHomeSet;
@@ -398,7 +397,7 @@ public class Locale {
 		locale.getString("resetchallenge.challengeReset", "[challengename] has been reset for [name]"));
 	helpColor = ChatColor.translateAlternateColorCodes('&', locale.getString("grid.helpColor", "&e"));
 	errorUseInGame = ChatColor.translateAlternateColorCodes('&', locale.getString("error.useInGame", "This command must be used in-game."));
-	adminHelpSetHome = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.resethome", "Sets player's home to your position"));
+	adminHelpSetHome = ChatColor.translateAlternateColorCodes('&', locale.getString("adminHelp.sethome", "Set player's home to your position"));
 	adminSetHomeNoneFound = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.noneFound", "No safe location found!"));
 	adminSetHomeHomeSet = ChatColor.translateAlternateColorCodes('&', locale.getString("adminSetHome.homeSet", "Home set to [location]"));
 	adminTpManualWarp = ChatColor.translateAlternateColorCodes('&', locale.getString("adminTp.manualWarp", "No safe spot found. Manually warp to somewhere near [location]."));

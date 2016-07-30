@@ -55,15 +55,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	if (!(sender instanceof Player)) {
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE + " "
 		    + plugin.myLocale().adminHelpcompleteChallenge);
-	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpdelete);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
-	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfo);
-	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " info:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpinfoPlayer);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpreload);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpresetAllChallenges);
 	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " resetchallenge <challengename> <player>:" + ChatColor.WHITE + " "
 		    + plugin.myLocale().adminHelpresetChallenge);
-	    sender.sendMessage(ChatColor.YELLOW + "/" + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale().adminHelpResetHome);
 	} else {
 	    // Only give help if the player has permissions
 	    // Permissions are split into admin permissions and mod permissions
@@ -74,19 +70,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " completechallenge <challengename> <player>:" + ChatColor.WHITE + " "
 			+ plugin.myLocale(player.getUniqueId()).adminHelpcompleteChallenge);
 	    }
-	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " delete <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpdelete);
-	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " info <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " info challenges <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpinfo);
-
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " reload:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpreload);
-	    }
-	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
-		player.sendMessage(ChatColor.YELLOW + "/" + label + " resethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpResetHome);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetchallenge <challengename> <player>:" + ChatColor.WHITE + " "
@@ -96,7 +84,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " resetallchallenges <player>:" + ChatColor.WHITE + " "
 			+ plugin.myLocale(player.getUniqueId()).adminHelpresetAllChallenges);
 	    }
-	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.resethome") || player.isOp()) {
+	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.sethome") || player.isOp()) {
 		player.sendMessage(ChatColor.YELLOW + "/" + label + " sethome <player>:" + ChatColor.WHITE + " " + plugin.myLocale(player.getUniqueId()).adminHelpSetHome);
 	    }
 	    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
@@ -117,7 +105,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	if (sender instanceof Player) {
 	    player = (Player) sender;
 	    if (split.length > 0) {
-		// Admin-only commands : reload, register, delete and purge
+		// Admin-only commands
 		if (split[0].equalsIgnoreCase("reload")) {
 		    if (!checkAdminPerms(player, split)) {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
@@ -149,22 +137,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		return false;
 	    }
 	case 2:
-	    if (split[0].equalsIgnoreCase("resethome")) { 
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-		} else {
-		    Location safeHome = plugin.getGrid().getSafeHomeLocation(playerUUID, 1);
-		    if (safeHome == null) {
-			sender.sendMessage(ChatColor.RED + plugin.myLocale().adminSetHomeNoneFound);
-		    } else {
-			plugin.getPlayers().setHomeLocation(playerUUID, safeHome);
-			sender.sendMessage(ChatColor.GREEN + plugin.myLocale().adminSetHomeHomeSet.replace("[location]", safeHome.getBlockX() + ", " + safeHome.getBlockY() + "," + safeHome.getBlockZ()));
-		    }
-		}
-		return true;
-	    } else if (split[0].equalsIgnoreCase("sethome")) { 
+	    if (split[0].equalsIgnoreCase("sethome")) { 
 		if (!(sender instanceof Player)) {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUseInGame);
 		    return true;
@@ -204,25 +177,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    new SafeSpotTeleport(plugin, player, warpSpot, failureMessage);
 		    return true;
 		}
-	    } else if (split[0].equalsIgnoreCase("delete")) {
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-		    return true;
-		} else {
-		    // This now deletes the player and cleans them up even if
-		    // they don't have an island
-		    sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().deleteremoving.replace("[name]", split[1]));
-		    // If they are online and in ASkyGrid then delete their
-		    // stuff too
-		    Player target = plugin.getServer().getPlayer(playerUUID);
-		    if (target != null) {
-			plugin.resetPlayer(target);
-		    }
-		    // plugin.getLogger().info("DEBUG: deleting player");
-		    return true;
-		}
 	    } else if (split[0].equalsIgnoreCase("info")) {
 		// Convert name to a UUID
 		final UUID playerUUID = plugin.getPlayers().getUUID(split[1]);
@@ -232,7 +186,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
 		    return true;
 		} else {
-		    showInfo(playerUUID, sender);
+		    showInfoChallenges(playerUUID, sender);
 		    return true;
 		}
 	    } else if (split[0].equalsIgnoreCase("resetallchallenges")) {
@@ -281,18 +235,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		sender.sendMessage(ChatColor.YELLOW
 			+ plugin.myLocale().resetChallengechallengeReset.replace("[challengename]", split[1].toLowerCase()).replace("[name]", split[2]));
 		return true;
-	    } else if (split[0].equalsIgnoreCase("info") && split[1].equalsIgnoreCase("challenges")) {
-		// Convert name to a UUID
-		final UUID playerUUID = plugin.getPlayers().getUUID(split[2]);
-		// plugin.getLogger().info("DEBUG: console player info UUID = "
-		// + playerUUID);
-		if (!plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-		    sender.sendMessage(ChatColor.RED + plugin.myLocale().errorUnknownPlayer);
-		    return true;
-		} else {
-		    showInfoChallenges(playerUUID, sender);
-		    return true;
-		}
 	    }
 	    return false;
 	default:
@@ -306,6 +248,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
      * @param playerUUID
      * @param sender
      */
+    /*
     private void showInfo(UUID playerUUID, CommandSender sender) {
 	sender.sendMessage(plugin.myLocale().adminInfoPlayer + ": " + ChatColor.GREEN + plugin.getPlayers().getName(playerUUID));
 	sender.sendMessage(ChatColor.WHITE + "UUID: " + playerUUID.toString());
@@ -322,7 +265,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		    + homeLoc.getBlockY() + "," + homeLoc.getBlockZ() + ")");
 	}
     }
-
+*/
     /**
      * Shows info on the challenge situation for player
      * 
@@ -391,33 +334,22 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	    switch (args.length) {
 	    case 0: 
 	    case 1:
-		options.addAll(Arrays.asList("reload", "completechallenge", "resetchallenge",
+		options.addAll(Arrays.asList("completechallenge", "info", "reload", "resetchallenge",
 			"resetallchallenges"));
 		break;
 	    case 2:
-		if (args[0].equalsIgnoreCase("delete")) {
-		    options.addAll(Util.getOnlinePlayerList());
-		}
-		if (args[0].equalsIgnoreCase("completechallenge")
-			|| args[0].equalsIgnoreCase("resetchallenge")) {
+		if (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge")) {
 		    options.addAll(plugin.getChallenges().getAllChallenges());
 		}
 		if (args[0].equalsIgnoreCase("resetallchallenges")) {
 		    options.addAll(Util.getOnlinePlayerList());
 		}
 		if (args[0].equalsIgnoreCase("info")) {
-		    options.add("challenges");
-
 		    options.addAll(Util.getOnlinePlayerList());
 		}
 		break;
 	    case 3: 
-		if (args[0].equalsIgnoreCase("completechallenge")
-			|| args[0].equalsIgnoreCase("resetchallenge")) {
-		    options.addAll(Util.getOnlinePlayerList());
-		}
-		if (args[0].equalsIgnoreCase("info")
-			&& args[1].equalsIgnoreCase("challenges")) {
+		if (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge")) {
 		    options.addAll(Util.getOnlinePlayerList());
 		}
 		break;
@@ -431,9 +363,6 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.reload") || player.isOp()) {
 		    options.add("reload");
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp()) {
-		    options.add("delete");
-		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp()) {
 		    options.add("completechallenge");
 		    options.add("resetchallenge");
@@ -442,24 +371,11 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp()) {
 		    options.add("info");
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.clearreset") || player.isOp()) {
-		    options.add("clearreset");
-		}
 		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp()) {
 		    options.add("tp");
 		}
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
-		    options.add("resetsign");
-		}
 		break;
 	    case 2:
-		if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.signadmin") || player.isOp()) {
-		    options.addAll(Util.getOnlinePlayerList());
-		}
-		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "admin.delete") || player.isOp())
-			&& args[0].equalsIgnoreCase("delete")) {
-		    options.addAll(Util.getOnlinePlayerList());
-		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
 			&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
 		    options.addAll(plugin.getChallenges().getAllChallenges());
@@ -470,23 +386,16 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
 			&& args[0].equalsIgnoreCase("info")) {
-		    options.add("challenges");
-
 		    options.addAll(Util.getOnlinePlayerList());
 		}
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.tp") || player.isOp())
-			&& (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("tpnether"))) {
+			&& (args[0].equalsIgnoreCase("tp"))) {
 		    options.addAll(Util.getOnlinePlayerList());
 		}
 		break;
 	    case 3: 
 		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.challenges") || player.isOp())
 			&& (args[0].equalsIgnoreCase("completechallenge") || args[0].equalsIgnoreCase("resetchallenge"))) {
-		    options.addAll(Util.getOnlinePlayerList());
-		}
-		if ((VaultHelper.checkPerm(player, Settings.PERMPREFIX + "mod.info") || player.isOp())
-			&& args[0].equalsIgnoreCase("info")
-			&& args[1].equalsIgnoreCase("challenges")) {
 		    options.addAll(Util.getOnlinePlayerList());
 		}
 		break;

@@ -45,14 +45,15 @@ permissions:
         children:
           askygrid.mod.bannedcommands:
             decription: Let a moderator use banned commands
+            default: false
           askygrid.mod.info:
             description: Let a moderator see info on a player
             default: op
           askygrid.mod.challenges:
             description: Let a moderator access challenge commands 
             default: op
-          askygrid.mod.resethome:
-            description: Allows setting or reseting of a player's home position
+          askygrid.mod.sethome:
+            description: Allows setting of a player's home position
             default: op
           askygrid.mod.tp:
             description: Allows teleport to a player's home position
@@ -61,7 +62,4 @@ permissions:
         children:
           askygrid.admin.reload:
             description: Reload the config.yml
-            default: op
-          askygrid.admin.delete:
-            description: Let a player completely remove a player
             default: op
