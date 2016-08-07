@@ -468,7 +468,6 @@ public class ASkyGrid extends JavaPlugin {
 	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
 
 	Settings.startingMoney = getConfig().getDouble("general.startingmoney", 0D);
-	Settings.respawnAtHome = getConfig().getBoolean("general.respawnonisland", false);
 	Settings.logInRemoveMobs = getConfig().getBoolean("general.loginremovemobs", true);
 	Settings.removeMobs = getConfig().getBoolean("general.asgremovemobs", false);
 	List<String> mobWhiteList = getConfig().getStringList("general.mobwhitelist");
