@@ -33,10 +33,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.wasteofplastic.askygrid.NotSetup.Reason;
 import com.wasteofplastic.askygrid.commands.AdminCmd;
 import com.wasteofplastic.askygrid.commands.Challenges;
@@ -47,6 +49,7 @@ import com.wasteofplastic.askygrid.listeners.NetherPortals;
 import com.wasteofplastic.askygrid.listeners.PlayerEvents;
 import com.wasteofplastic.askygrid.panels.ChallengePanel;
 import com.wasteofplastic.askygrid.panels.WarpPanel;
+import com.wasteofplastic.askygrid.protection.GGuard;
 import com.wasteofplastic.askygrid.util.VaultHelper;
 
 /**
@@ -85,7 +88,13 @@ public class ASkyGrid extends JavaPlugin {
 
     // Messages object
     private Messages messages;
-    
+
+    // WorldGuard object
+    private Plugin wgPlugin;
+
+    // Grid Guard
+    private GGuard gguard;
+
     /**
      * Returns the World object for the grid world named in config.yml.
      * If the world does not exist then it is created.
@@ -264,7 +273,8 @@ public class ASkyGrid extends JavaPlugin {
 
 		    return;
 		}
-		getServer().getScheduler().runTask(plugin, new Runnable() {
+		getServer().getScheduler().runTask(plugin, new Runnable() {		    
+
 		    @Override
 		    public void run() {
 			// load the list - order matters - grid first, then top
@@ -280,11 +290,35 @@ public class ASkyGrid extends JavaPlugin {
 			for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
 			    tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
 			}
+			startProtection();
 			getLogger().info("All files loaded. Ready to play...");
 		    }
 		});
 	    }
 	});
+    }
+    
+    /**
+     * Start the WorldGuard protection if WG is enabled
+     */
+    public void startProtection() {
+	// WorldGuard
+	if (getServer().getPluginManager().isPluginEnabled("WorldGuard")) {
+	    if (getWorldGuard() != null) {
+		gguard = new GGuard(plugin);
+		if (Settings.claim_protectionRange > 0) {
+		    getLogger().info("Warp sign protection powered by WorldGuard");				    
+		} else {
+		    getLogger().info("No protection for warp signs.");
+		    // Remove all the protections
+		    if (gguard.removeAllRegions()) {
+			getLogger().info("Old warp protection regions removed!");
+		    }
+		}
+	    }
+	} else {
+	    getLogger().info("No protection for warp signs."); 
+	}
     }
 
     /**
@@ -372,7 +406,7 @@ public class ASkyGrid extends JavaPlugin {
 	availableLocales.put("cs-CS", new Locale(this,"cs-CS"));
 	availableLocales.put("sk-SK", new Locale(this,"sk-SK"));
 	availableLocales.put("zh-TW", new Locale(this,"zh-TW"));
-*/
+	 */
 	// Assign settings
 	String configVersion = getConfig().getString("general.version", "");
 	//getLogger().info("DEBUG: config ver length " + configVersion.split("\\.").length);
@@ -460,9 +494,9 @@ public class ASkyGrid extends JavaPlugin {
 	    Settings.waterAnimalSpawnLimit = -1;
 	}
 
-	Settings.claim_protectionRange = getConfig().getInt("general.protectionRange", 100);
-	if (Settings.claim_protectionRange < 1) {
-	    Settings.claim_protectionRange = 1;
+	Settings.claim_protectionRange = getConfig().getInt("general.protectionRange", 10);
+	if (Settings.claim_protectionRange < 0) {
+	    Settings.claim_protectionRange = 0;
 	}
 	Settings.resetMoney = getConfig().getBoolean("general.resetmoney", true);
 	Settings.resetEnderChest = getConfig().getBoolean("general.resetenderchest", false);
@@ -677,4 +711,22 @@ public class ASkyGrid extends JavaPlugin {
     public boolean isOnePointEight() {
 	return onePointEight;
     }
+
+    public WorldGuardPlugin getWorldGuard() {
+	wgPlugin = getServer().getPluginManager().getPlugin("WorldGuard");
+
+	// WorldGuard may not be loaded
+	if (wgPlugin == null || !(wgPlugin instanceof WorldGuardPlugin)) {
+	    getLogger().severe("Warp sign protection is > 0 but could not load WorldGuard!");
+	    return null;
+	}
+	return (WorldGuardPlugin) wgPlugin;
+    }
+
+    /**
+     * @return the gguard
+     */
+    public GGuard getGguard() {
+	return gguard;
+    } 
 }

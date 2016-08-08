@@ -4,6 +4,7 @@ version: ${version}
 description: A SkyGrid Plugin
 author: tastybento
 depend: [Vault]
+softdepend: [WorldGuard]
 load: startup
 loadbefore: [Multiverse-Core]
 commands:

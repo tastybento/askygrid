@@ -18,6 +18,21 @@ general:
    # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000
    distance: 1000
 
+   # Protection radius given when planting a Welcome Sign - requires WorldGuard.
+   # This is optional. You can use other plugins to provide protection areas, like
+   # stones, or grief prevention plugins.
+   # If a player removes their sign, the WG region protection is removed.
+   # Set the entry and exit text in locale.yml or set to "" to have no text.
+   #
+   # Setting to 0 will disable protection and remove any protection regions.
+   # Setting this to a larger number will not change any current warp signs and protection
+   # will only start when a new warp sign is made.
+   #
+   # Players can be given larger spaces with the askygrid.protectionradius.# permission
+   # where # is a number greater than the default. It will only be used with the next
+   # warp sign (it does not increase current protection ranges).
+   protectionRange: 0
+   
    # Banned commands - these commands cannot be run by players in the world
    # Bypass by Op or with the askygrid.mod.bannedcommands permission
    # The spawner command should be banned otherwise chaos will ensue!

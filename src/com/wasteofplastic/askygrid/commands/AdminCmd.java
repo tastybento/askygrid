@@ -19,7 +19,6 @@ package com.wasteofplastic.askygrid.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -130,6 +129,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 		plugin.reloadConfig();
 		plugin.loadPluginConfig();
 		plugin.getChallenges().reloadChallengeConfig();
+		plugin.startProtection();
 		sender.sendMessage(ChatColor.YELLOW + plugin.myLocale().reloadconfigReloaded);
 		return true;
 	    } else {

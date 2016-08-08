@@ -36,6 +36,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import com.wasteofplastic.askygrid.events.WarpListEvent;
 import com.wasteofplastic.askygrid.util.Util;
@@ -53,6 +54,7 @@ public class WarpSigns implements Listener {
     private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
     // Where warps are stored
     private YamlConfiguration welcomeWarps;
+    //private HashMap<UUID, Rectangle2D> protectionArea = new HashMap<UUID, Rectangle2D>();
 
     /**
      * @param plugin
@@ -86,6 +88,9 @@ public class WarpSigns implements Listener {
 				    // This is the player's sign, so allow it to
 				    // be destroyed
 				    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssignRemoved);
+				    if (Settings.claim_protectionRange > 0 && plugin.getGguard() != null) {
+					player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpsProtectionLost);
+				    }
 				    removeWarp(player.getUniqueId());
 				} else {
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoRemove);
@@ -117,10 +122,7 @@ public class WarpSigns implements Listener {
 	if (player.getWorld().equals(ASkyGrid.getGridWorld())) {
 	    //plugin.getLogger().info("DEBUG: Correct world");
 	    if (e.getBlock().getType().equals(Material.SIGN_POST) || e.getBlock().getType().equals(Material.WALL_SIGN)) {
-
 		//plugin.getLogger().info("DEBUG: The first line of the sign says " + title);
-		// Check if someone is changing their own sign
-		// This should never happen !!
 		if (title.equalsIgnoreCase(plugin.myLocale().warpswelcomeLine)) {
 		    //plugin.getLogger().info("DEBUG: Welcome sign detected");
 		    // Welcome sign detected - check permissions
@@ -128,18 +130,34 @@ public class WarpSigns implements Listener {
 			player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPerm);
 			return;
 		    }
+		    // Make WG region.
+		    // Check if this sign is close to another sign (will protection overlap?)
+		    int claimSize = 0;
+		    if (plugin.getWorldGuard() != null && Settings.claim_protectionRange > 0) {
+			claimSize = plugin.getGguard().createRegion(player, e.getBlock().getLocation());
+			if (claimSize == 0) {
+			    // Too close
+			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNoPlace);
+			    return;
+			}
+		    }
+		    // WG region successfully made.
+
 		    // Check if the player already has a sign
 		    final Location oldSignLoc = getWarp(player.getUniqueId());
 		    if (oldSignLoc == null) {
 			//plugin.getLogger().info("DEBUG: Player does not have a sign already");
 			// First time the sign has been placed or this is a new
 			// sign
-			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
+			if (addWarp(player, e.getBlock().getLocation())) {
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
+			    if (claimSize > 0) {
+				player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpsProtectionEnabled.replace("[number]", String.valueOf(claimSize)));
+			    }
 			    e.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
 			    for (int i = 1; i<4; i++) {
 				e.setLine(i, ChatColor.translateAlternateColorCodes('&', e.getLine(i)));
-			    }
+			    }			   
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
 			    e.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
@@ -164,13 +182,16 @@ public class WarpSigns implements Listener {
 				    oldSign.setLine(0, ChatColor.RED + plugin.myLocale().warpswelcomeLine);
 				    oldSign.update();
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpsdeactivate);
-				    removeWarp(player.getUniqueId());
+				    //removeWarp(player.getUniqueId());
 				}
 			    }
 			}
 			// Set up the warp
-			if (addWarp(player.getUniqueId(), e.getBlock().getLocation())) {
+			if (addWarp(player, e.getBlock().getLocation())) {
 			    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpssuccess);
+			    if (claimSize > 0) {
+				player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).warpsProtectionEnabled.replace("[number]", String.valueOf(claimSize)));
+			    }
 			    e.setLine(0, ChatColor.GREEN + plugin.myLocale().warpswelcomeLine);
 			} else {
 			    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorDuplicate);
@@ -195,6 +216,13 @@ public class WarpSigns implements Listener {
 	    warps.put(p.toString(), warpList.get(p));
 	}
 	welcomeWarps.set("warps", warps);
+	// Save the protection areas
+	/*
+	for (UUID p: protectionArea.keySet()) {
+	    warps.put(p.toString(), protectionArea.get(p));
+	}
+	 */
+	welcomeWarps.set("protections", warps);
 	Util.saveYamlFile(welcomeWarps, "warps.yml");
 	// Update the warp panel - needs to be done 1 tick later so that the sign
 	// text will be updated.
@@ -217,6 +245,8 @@ public class WarpSigns implements Listener {
      */
     public void loadWarpList() {
 	plugin.getLogger().info("Loading warps...");
+	warpList.clear();
+	//protectionArea.clear();
 	// warpList.clear();
 	welcomeWarps = Util.loadYamlFile("warps.yml");
 	if (welcomeWarps.getConfigurationSection("warps") == null) {
@@ -234,39 +264,81 @@ public class WarpSigns implements Listener {
 		// Check that a warp sign is still there
 		if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
 		    warpList.put(playerUUID, temp.get(s));
+		    // Get the protection area
+		    /*
+		    try {
+			Rectangle2D rectangle = (Rectangle2D) welcomeWarps.get("protections." + s);
+			protectionArea.put(playerUUID, rectangle);
+		    } catch (Exception e) {
+			plugin.getLogger().warning("Could not load protection for warp at location " + (String) temp.get(s) + ". Using default protection size");
+			// TODO: set default
+			e.printStackTrace();
+		    }*/
 		} else {
 		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");
+		    if (plugin.getGguard() != null) {
+			plugin.getGguard().removeRegion(playerUUID);
+			plugin.getLogger().warning("Removed WG protection region.");
+		    }
 		}
 	    } catch (Exception e) {
-		plugin.getLogger().severe("Problem loading warp at location " + (String) temp.get(s) + " - removing.");
+		plugin.getLogger().severe("Problem loading warp at location " + (String) temp.get(s) + " - ignoring.");
 	    }
 	}
     }
 
     /**
-     * Stores warps in the warp array
-     * 
+     * Stores warps in the warp array. Assumes that checking for the protection area has already been done
      * @param player
      * @param loc
+     * @return true if successful, false if not
      */
-    public boolean addWarp(UUID player, Location loc) {
+    public boolean addWarp(Player player, Location loc) {
 	final String locS = Util.getStringLocation(loc);
 	// Do not allow warps to be in the same location
 	if (warpList.containsValue(locS)) {
 	    return false;
 	}
-	// Remove the old warp if it existed
-	if (warpList.containsKey(player)) {
-	    warpList.remove(player);
-	}
-	warpList.put(player, locS);
+	warpList.put(player.getUniqueId(), locS);
+	// Put the protection
+	//protectionArea.put(player.getUniqueId(), getProtectionRectangle(player, loc));
 	saveWarpList(true);
 	return true;
     }
 
     /**
+     * Returns the protection rectangle applicable for this player
+     * @param player
+     * @param loc
+     * @return rectangle
+     */
+    /*
+    private Rectangle2D getProtectionRectangle(Player player, Location loc) {
+	// Get the distance
+	int maxSize = Settings.claim_protectionRange;
+	for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+	    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "protectionradius.")) {
+		if (perms.getPermission().contains(Settings.PERMPREFIX + "protectionradius.*")) {
+		    maxSize = Settings.claim_protectionRange;
+		    break;
+		} else {
+		    // Get the max value should there be more than one
+		    maxSize = Math.max(maxSize, Integer.valueOf(perms.getPermission().split(Settings.PERMPREFIX + "protectionradius.")[1]));
+		}
+	    }
+	    // Do some sanity checking
+	    if (maxSize < Settings.claim_protectionRange) {
+		maxSize = Settings.claim_protectionRange;
+	    }
+	}
+	double x = loc.getX() - maxSize;
+	double z = loc.getZ() - maxSize;
+	return new Rectangle2D.Double(x, z, maxSize * 2, maxSize * 2);
+    }*/
+
+    /**
      * Removes a warp when the welcome sign is destroyed. Called by
-     * WarpSigns.java.
+     * WarpSigns.java. Removed the WG region too if it exists.
      * 
      * @param uuid
      */
@@ -274,6 +346,9 @@ public class WarpSigns implements Listener {
 	if (warpList.containsKey(uuid)) {
 	    popSign(Util.getLocationString((String) warpList.get(uuid)));
 	    warpList.remove(uuid);
+	}
+	if (Settings.claim_protectionRange > 0 && plugin.getGguard() != null) {
+	    plugin.getGguard().removeRegion(uuid);
 	}
 	saveWarpList(true);
     }
@@ -310,10 +385,19 @@ public class WarpSigns implements Listener {
 	    }
 	    for (UUID rp : playerList) {
 		warpList.remove(rp);
+		boolean removed = false;
+		// Remove region
+		if (plugin.getWorldGuard() != null && Settings.claim_protectionRange > 0) {
+		    plugin.getGguard().removeRegion(rp);
+		    removed = true;
+		}
 		final Player p = plugin.getServer().getPlayer(rp);
 		if (p != null) {
 		    // Inform the player
 		    p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).warpssignRemoved);
+		    if (removed) {
+			p.sendMessage(ChatColor.RED + plugin.myLocale(p.getUniqueId()).warpsProtectionLost);
+		    }
 		}
 		plugin.getLogger().warning(rp.toString() + "'s welcome sign at " + loc.toString() + " was removed by something.");
 	    }
@@ -396,4 +480,25 @@ public class WarpSigns implements Listener {
 	return "";
     }
 
+    /**
+     * Checks if a player is in a protected area. 
+     * @param playerUUID
+     * @param loc
+     * @return true if in a protected area, false if not or in your own protected area
+     */
+    /*
+    public boolean inProtectedArea(UUID playerUUID, Location loc) {
+	for (Entry<UUID, Rectangle2D> rect: protectionArea.entrySet()) {
+	    // Only check non player areas
+	    if (!playerUUID.equals(rect.getKey()) && rect.getValue().contains(loc.getX(), loc.getZ())) {
+		// check world
+		Location l = Util.getLocationString((String) warpList.get(playerUUID));
+		if (l.getWorld().equals(loc.getWorld())) {
+		    return true;
+		}		
+	    }
+	}
+	return false;
+    }
+     */
 }

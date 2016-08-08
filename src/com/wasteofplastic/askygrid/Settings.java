@@ -119,4 +119,7 @@ public class Settings {
     public static boolean allowTNTDamage;
     public static boolean allowChestDamage;
     public static List<String> bannedCommandList;
+    
+    
+    public static boolean allowHorseInvAccess;
 }

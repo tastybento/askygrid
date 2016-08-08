@@ -6,7 +6,7 @@
 	<artifactId>askygrid</artifactId>
 	<packaging>jar</packaging>
 
-	<name>com.wasteofplastic</name>
+	<name>askygrid</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -61,6 +61,11 @@
 			<artifactId>VaultAPI</artifactId>
 			<version>1.5</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sk89q</groupId>
+			<artifactId>worldguard</artifactId>
+			<version>LATEST</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -71,6 +76,10 @@
 			<id>vault-repo</id>
 			<url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
 		</repository>
+		<repository>
+			<id>sk89q-repo</id>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
 	</repositories>
-	<version>3.0</version>
+	<version>4.0</version>
 </project>

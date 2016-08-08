@@ -178,6 +178,10 @@ public class Locale {
     public String gridSubTitleColor = "blue";
     public String gridTitleColor = "red";
     public String gridDonateColor = "gold";
+    public String warpsentry;
+    public String warpsexit;
+    public String warpsProtectionLost;
+    public String warpsProtectionEnabled;
 
     /**
      * Creates a locale object full of localized strings for a language
@@ -268,10 +272,14 @@ public class Locale {
 	warpsremoved = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.removed", "Welcome sign removed!"));
 	warpssignRemoved = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.signRemoved", "Your welcome sign was removed!"));
 	warpsdeactivate = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.deactivate", "Deactivating old sign!"));
+	warpsentry = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.entry", "Now entering [player]'s protected area"));
+	warpsexit = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.exit", "Now leaving [player]'s protected area"));
 	warpserrorNoRemove = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorNoRemove", "You can only remove your own Welcome Sign!"));
 	warpserrorNoPerm = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorNoPerm", "You do not have permission to place Welcome Signs yet!"));
+	warpserrorNoPlace = ChatColor.translateAlternateColorCodes('&',
+		locale.getString("warps.errorNoPlace", "You cannot place a sign here because it will overlap another player's claim."));
 	warpserrorDuplicate = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("warps.errorDuplicate", "Sorry! There is a sign already in that location!"));
 	warpserrorDoesNotExist = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.errorDoesNotExist", "That warp doesn't exist!"));
@@ -287,6 +295,8 @@ public class Locale {
 	warpsPlayerWarped = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.playerWarped", "[name] &2warped to your sign!"));
 	warpsPrevious = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.previous", "Previous"));
 	warpsNext = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.next", "Next"));
+	warpsProtectionEnabled = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.protectionenabled", "Protection enabled: [number] x [number] around sign"));
+	warpsProtectionLost = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.protectionlost", "Protection lost."));
 	warpsTitle = ChatColor.translateAlternateColorCodes('&', locale.getString("warps.title", "ASkyGrid warps"));
 	setHomehomeSet = ChatColor.translateAlternateColorCodes('&',
 		locale.getString("sethome.homeSet", "Your home has been set to your current location."));
