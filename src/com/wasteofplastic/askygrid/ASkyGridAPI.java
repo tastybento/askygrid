@@ -1,5 +1,6 @@
 package com.wasteofplastic.askygrid;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -30,11 +31,22 @@ public class ASkyGridAPI {
 
     /**
      * @param playerUUID
-     * @return HashMap of all of the known challenges with a boolean marking
-     *         them as complete (true) or incomplete (false)
+     * @return Map of all of the known challenges with a boolean marking
+     *         them as complete (true) or incomplete (false). This is a view of the
+     *         challenges map that only allows read operations.
      */
-    public HashMap<String, Boolean> getChallengeStatus(UUID playerUUID) {
-	return plugin.getPlayers().getChallengeStatus(playerUUID);
+    public Map<String, Boolean> getChallengeStatus(UUID playerUUID) {
+        return Collections.unmodifiableMap(plugin.getPlayers().getChallengeStatus(playerUUID));
+    }
+
+    /**
+     * @param playerUUID
+     * @return Map of all of the known challenges and how many times each
+     *         one has been completed. This is a view of the challenges
+     *         map that only allows read operations.
+     */
+    public Map<String, Integer> getChallengeTimes(UUID playerUUID) {
+        return Collections.unmodifiableMap(plugin.getPlayers().getChallengeTimes(playerUUID));
     }
 
     public Location getHomeLocation(UUID playerUUID) {
