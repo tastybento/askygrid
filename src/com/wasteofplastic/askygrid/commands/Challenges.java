@@ -98,7 +98,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	 * }
 	 */
 	// Check permissions
-	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "challenges")) {
+	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "challenges") && !VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.challenges") ) {
 	    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorNoPermission);
 	    return true;
 	}

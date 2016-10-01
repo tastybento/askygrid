@@ -130,10 +130,6 @@ public class SkyGridPop extends BlockPopulator {
 		}
 	    }
 	}
-	if (chunk.getX() == 0 && chunk.getZ() == 0) {
-	    setEndPortal(chunk);
-	}
-
     }
 
     private void setSpawner(Block b, Random random) {
@@ -221,24 +217,4 @@ public class SkyGridPop extends BlockPopulator {
 	return new ItemStack(random.nextInt(max - min + 1) + min, 
 		random.nextInt(lg - sm + 1) + sm);
     }
-
-    private void setEndPortal(Chunk chunk) {
-
-	chunk.getBlock(1, 4, 0).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(2, 4, 0).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(3, 4, 0).setType(Material.ENDER_PORTAL_FRAME);
-
-	chunk.getBlock(4, 4, 1).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(4, 4, 2).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(4, 4, 3).setType(Material.ENDER_PORTAL_FRAME);
-
-	chunk.getBlock(3, 4, 4).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(2, 4, 4).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(1, 4, 4).setType(Material.ENDER_PORTAL_FRAME);
-
-	chunk.getBlock(0, 4, 3).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(0, 4, 2).setType(Material.ENDER_PORTAL_FRAME);
-	chunk.getBlock(0, 4, 1).setType(Material.ENDER_PORTAL_FRAME);
-    }
-
 }
