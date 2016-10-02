@@ -352,10 +352,6 @@ public class Challenges implements CommandExecutor, TabCompleter {
     }
 
     private void runCommands(Player player, List<String> commands) {
-	// Ignore commands with this perm
-	if (player.hasPermission(Settings.PERMPREFIX + "command.challengeexempt") && !player.isOp()) {
-	    return;
-	}
 	for (String cmd : commands) {
 	    if (cmd.startsWith("[SELF]")) {
 		plugin.getLogger().info("Running command '" + cmd + "' as " + player.getName());

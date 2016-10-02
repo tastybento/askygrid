@@ -97,7 +97,7 @@ challenges:
       #requiredMoney: 10
       takeItems: true
       itemReward: ''
-      rewardText: 'A irritating stick'
+      rewardText: 'An irritating stick'
       rewardcommands:
       - "give [player] stick 1 0 {display:{Name:\"Irritating Stick\"},ench:[{id:16,lvl:5},{id:19,lvl:2}]}"
       moneyReward: 10
