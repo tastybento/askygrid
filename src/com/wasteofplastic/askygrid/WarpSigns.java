@@ -36,7 +36,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import com.wasteofplastic.askygrid.events.WarpListEvent;
 import com.wasteofplastic.askygrid.util.Util;

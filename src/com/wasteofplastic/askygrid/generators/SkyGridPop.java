@@ -143,6 +143,7 @@ public class SkyGridPop extends BlockPopulator {
 
     @SuppressWarnings("deprecation")
     private void setChest(Block b, Random random) {
+	//Bukkit.getLogger().info("DEBUG: setChest");
 	Chest chest = (Chest) b.getState();
 	Inventory inv = chest.getBlockInventory();
 	HashSet<ItemStack> set = new HashSet<ItemStack>();

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -56,6 +55,12 @@ public class SkyGridGen extends ChunkGenerator {
 			setBlock(chunk, x, y, z, Material.SOUL_SAND);
 			setBlock(chunk, x, y+1, z, blockMat);
 		    } else {
+			/*
+			if (blockMat.equals(Material.CHEST)) {
+			    int xLoc = (chunkx*16+x);
+			    int zLoc = (chunkz*16+z);
+			    Bukkit.getLogger().info("DEBUG: setting chest at (" + xLoc + " " + y + " " + zLoc + ")");
+			}*/
 			setBlock(chunk, x, y, z, blockMat);
 		    }
 		}

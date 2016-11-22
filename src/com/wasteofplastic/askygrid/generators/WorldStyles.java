@@ -64,7 +64,7 @@ public class WorldStyles {
 	for (String material: config.getConfigurationSection("world.blocks").getValues(false).keySet()) {
 	    try {
 		Material blockMaterial = Material.valueOf(material.toUpperCase());
-		//Bukkit.getLogger().info("DEBUG: read in material " + blockMaterial);
+		//Bukkit.getLogger().info("DEBUG: read in material " + blockMaterial + " value " + config.getInt("world.blocks." + material));
 		blockProbability.addBlock(blockMaterial, config.getInt("world.blocks." + material));
 		count++;
 	    } catch (Exception e) {
@@ -98,25 +98,33 @@ public class WorldStyles {
      */
     private static List<EntityType> normalSpawns() {
 	List<EntityType> s = new ArrayList<EntityType>();
-	s.add(EntityType.CREEPER);
-	s.add(EntityType.SKELETON);
-	s.add(EntityType.SPIDER);
-	s.add(EntityType.CAVE_SPIDER);
-	s.add(EntityType.ZOMBIE);
-	s.add(EntityType.SLIME);
-	s.add(EntityType.PIG);
-	s.add(EntityType.SHEEP);
-	s.add(EntityType.COW);
-	s.add(EntityType.CHICKEN);
-	s.add(EntityType.SQUID);
-	s.add(EntityType.WOLF);
-	s.add(EntityType.ENDERMAN);
-	s.add(EntityType.SILVERFISH);
-	s.add(EntityType.VILLAGER);
-	s.add(EntityType.RABBIT);
-	s.add(EntityType.GUARDIAN);
-	s.add(EntityType.HORSE);
-	s.add(EntityType.WITCH);
+	List<String> types = new ArrayList<String>();
+	types.add("CREEPER");
+	types.add("SKELETON");
+	types.add("SPIDER");
+	types.add("CAVE_SPIDER");
+	types.add("ZOMBIE");
+	types.add("SLIME");
+	types.add("PIG");
+	types.add("SHEEP");
+	types.add("COW");
+	types.add("CHICKEN");
+	types.add("SQUID");
+	types.add("WOLF");
+	types.add("ENDERMAN");
+	types.add("SILVERFISH");
+	types.add("VILLAGER");
+	types.add("RABBIT");
+	types.add("GUARDIAN");
+	types.add("HORSE");
+	types.add("WITCH");
+	types.add("LLAMA");
+	types.add("POLAR_BEAR");
+	for (String type : types) {
+	    if (EntityType.valueOf(type) != null) {
+		s.add(EntityType.valueOf(type));
+	    }
+	}
 	return s;
     }
 
