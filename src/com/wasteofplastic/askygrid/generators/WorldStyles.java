@@ -120,9 +120,9 @@ public class WorldStyles {
 	types.add("WITCH");
 	types.add("LLAMA");
 	types.add("POLAR_BEAR");
-	for (String type : types) {
-	    if (EntityType.valueOf(type) != null) {
-		s.add(EntityType.valueOf(type));
+	for (EntityType type: EntityType.values()) {
+	    if (types.contains(type.toString())) {
+		s.add(type);
 	    }
 	}
 	return s;
