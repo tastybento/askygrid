@@ -99,6 +99,10 @@ public class PlayerEvents implements Listener {
 	    // Add them to the list to be respawned on their island
 	    respawn.add(playerUUID);
 	}
+	// Mute death messages
+        if (Settings.muteDeathMessages) {
+            e.setDeathMessage(null);
+        }
     } 
 
     /*

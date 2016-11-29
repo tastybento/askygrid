@@ -125,6 +125,7 @@ public class WorldStyles {
 		s.add(type);
 	    }
 	}
+	Bukkit.getLogger().info("DEBUG: spawner list = " + s);
 	return s;
     }
 
