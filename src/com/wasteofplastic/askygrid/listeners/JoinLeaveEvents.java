@@ -99,7 +99,7 @@ public class JoinLeaveEvents implements Listener {
 	    plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
 	}
 	players.save(playerUUID);
-	if (Settings.logInRemoveMobs) {
+	if (Settings.logInRemoveMobs && player.getWorld().getName().startsWith(Settings.worldName)) {
 	    plugin.getGrid().removeMobs(player.getLocation());
 	}
    }
