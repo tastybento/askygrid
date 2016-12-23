@@ -133,19 +133,23 @@ public class GGuard {
     }
 
     /**
-     * Removes all the regions when the protection is set to zero
+     * Removes all the ASkyGrid regions when the protection is set to zero
      * @return true if some regions were deleted
      */
     public boolean removeAllRegions() {
 	boolean deleted = false;
 	for (String region: rm.getRegions().keySet()) {
-	    rm.removeRegion(region);
-	    deleted = true;
+	    if (region.startsWith("askygrid-")) {
+		rm.removeRegion(region);
+		deleted = true;
+	    }
 	}
 	if (rmNether != null) {
 	    for (String region: rmNether.getRegions().keySet()) {
-		rmNether.removeRegion(region);
-		deleted = true;
+		if (region.startsWith("askygrid-")) {
+		    rmNether.removeRegion(region);
+		    deleted = true;
+		}
 	    }
 	}
 	return deleted;
