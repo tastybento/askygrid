@@ -26,11 +26,11 @@ import org.bukkit.material.SpawnEgg;
 import com.wasteofplastic.askygrid.Settings;
 
 
+@SuppressWarnings("deprecation")
 public class SkyGridPop extends BlockPopulator {
     private static RandomSeries slt = new RandomSeries(27);
     private final int size;
     private final static boolean DEBUG = false;
-    private final static double END_PORTAL_PROB = 0.05;
     private final static HashMap<String, Double> endItems;
     private boolean spawnEggMeta = false;
     private final static HashMap<String, Short> spawnEggData;
@@ -78,7 +78,7 @@ public class SkyGridPop extends BlockPopulator {
 		    // Do an end portal check
 		    if (Settings.createEnd && world.getEnvironment().equals(Environment.NORMAL)
 			    && x==0 && z==0 && y == 0 && !chunkHasPortal) {
-			if (random.nextDouble() < END_PORTAL_PROB) {
+			if (random.nextDouble() < Settings.endPortalProb) {
 			    chunkHasPortal = true;
 			    for (int xx = 0; xx< 5; xx++) {
 				for (int zz = 0; zz < 5; zz++) {

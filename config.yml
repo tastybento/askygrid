@@ -13,9 +13,11 @@ general:
    worldName: ASkyGrid
    # Create a Grid Nether - if this is false, the nether grid world will not be made
    createnether: true
-   # Create a Grid End - if this is false, the end grid world will not be made
+   # Create a Grid End - if this is false, the end grid world will not be made.
+   # If true, end portal frames will be generated at the bottom of the overworld grid
    createend: true
-
+   # The probability of a frame being created in a chunk.
+   endframeprobability: 0.05
 
    # distance around 0,0 where players can spawn
    # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000

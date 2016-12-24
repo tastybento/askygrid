@@ -462,6 +462,8 @@ public class ASkyGrid extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("general.debug", 0);
+	// End portal probability
+	Settings.endPortalProb = getConfig().getDouble("general.endframeprobability", 0.05);
 	// Banned commands
 	Settings.bannedCommandList = getConfig().getStringList("general.bannedcommands");
 	// Mute death messages
