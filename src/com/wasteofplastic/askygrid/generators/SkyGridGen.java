@@ -54,13 +54,22 @@ public class SkyGridGen extends ChunkGenerator {
 
 			setBlock(chunk, x, y, z, Material.SOUL_SAND);
 			setBlock(chunk, x, y+1, z, blockMat);
+		    } else if (blockMat.toString().equals("END_ROD")) {
+			//Bukkit.getLogger().info("DEBUG: end rod - result of random selection = " + blockMat + " " + (chunkx*16+x) + " " + y + " " + (chunkz*16+z));
+			setBlock(chunk, x, y, z, Material.ENDER_STONE);
+			setBlock(chunk, x, y+1, z, blockMat);
+		    } else if (blockMat.toString().equals("CHORUS_PLANT")) {
+			//Bukkit.getLogger().info("DEBUG: Chorus plant - result of random selection = " + blockMat + " " + (chunkx*16+x) + " " + y + " " + (chunkz*16+z));
+			setBlock(chunk, x, y, z, Material.ENDER_STONE);
+			setBlock(chunk, x, y+1, z, blockMat);
 		    } else {
 			/*
 			if (blockMat.equals(Material.CHEST)) {
 			    int xLoc = (chunkx*16+x);
 			    int zLoc = (chunkz*16+z);
 			    Bukkit.getLogger().info("DEBUG: setting chest at (" + xLoc + " " + y + " " + zLoc + ")");
-			}*/
+			}
+			*/
 			setBlock(chunk, x, y, z, blockMat);
 		    }
 		}

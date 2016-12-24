@@ -288,6 +288,7 @@ public class GridManager {
 	//plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
 	//home.getChunk().load();
 	player.teleport(home);
+	player.setFallDistance(0);
 	//player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
 	if (number ==1 ) {
 	    player.sendMessage(ChatColor.GREEN + plugin.myLocale(player.getUniqueId()).homeTeleport);

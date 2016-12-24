@@ -13,6 +13,9 @@ general:
    worldName: ASkyGrid
    # Create a Grid Nether - if this is false, the nether grid world will not be made
    createnether: true
+   # Create a Grid End - if this is false, the end grid world will not be made
+   createend: true
+
 
    # distance around 0,0 where players can spawn
    # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000
@@ -182,12 +185,27 @@ world:
      STATIONARY_LAVA: 5
      GRAVEL: 30
      MOB_SPAWNER: 2
-     CHEST: 1
+     CHEST: 2
      NETHERRACK: 300
      SOUL_SAND: 100
-     GLOWSTONE: 1
+     GLOWSTONE: 2
      NETHER_BRICK: 30
      NETHER_FENCE: 10
      NETHER_BRICK_STAIRS: 15
      NETHER_WARTS: 30
      QUARTZ_ORE: 15
+   # The End blocks. END_CRYSTAL cannot be used because it causes serious performance issues
+   endblocks:
+     OBSIDIAN: 10
+     ENDER_STONE: 300
+     MOB_SPAWNER: 1
+     CHEST: 1
+     END_BRICKS: 20
+     CHORUS_PLANT: 5
+     STAINED_GLASS: 1
+     END_ROD: 5
+     PURPUR_BLOCK: 10
+     PURPUR_PILLAR: 10
+     PURPUR_STAIRS: 8
+     PURPUR_SLAB: 10
+     

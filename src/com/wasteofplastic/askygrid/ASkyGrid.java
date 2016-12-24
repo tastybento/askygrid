@@ -44,6 +44,7 @@ import com.wasteofplastic.askygrid.commands.AdminCmd;
 import com.wasteofplastic.askygrid.commands.Challenges;
 import com.wasteofplastic.askygrid.commands.SkyGridCmd;
 import com.wasteofplastic.askygrid.generators.SkyGridGen;
+import com.wasteofplastic.askygrid.listeners.BlockEndDragon;
 import com.wasteofplastic.askygrid.listeners.JoinLeaveEvents;
 import com.wasteofplastic.askygrid.listeners.NetherPortals;
 import com.wasteofplastic.askygrid.listeners.PlayerEvents;
@@ -62,6 +63,7 @@ public class ASkyGrid extends JavaPlugin {
     // The ASkyGrid world
     private static World gridWorld = null;
     private static World netherWorld = null;
+    private static World endWorld = null;
     // Player folder file
     private File playersFolder;
     // Challenges object
@@ -111,6 +113,10 @@ public class ASkyGrid extends JavaPlugin {
 	    if (Settings.createNether) {
 		getNetherWorld();
 	    }
+	    // Make the end if it does not exist
+	    if (Settings.createEnd) {
+		getEndWorld();
+	    }
 	    // Multiverse configuration
 	    if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
 		Bukkit.getLogger().info("Trying to register generator with Multiverse ");
@@ -127,7 +133,16 @@ public class ASkyGrid extends JavaPlugin {
 			if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
 				"mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether")) {
 			    Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
-			}}
+			}
+		    }
+		    if (Settings.createEnd) {		
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+				"mv import " + Settings.worldName + "_the_end end -g " + plugin.getName());
+			if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+				"mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_the_end")) {
+			    Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
+			}
+		    }
 		} catch (Exception e) {
 		    Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
 		    e.printStackTrace();
@@ -140,7 +155,14 @@ public class ASkyGrid extends JavaPlugin {
 	gridWorld.setWaterAnimalSpawnLimit(Settings.waterAnimalSpawnLimit);
 	gridWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
 	gridWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
-
+	if (Settings.createNether) {
+	    netherWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+	    netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+	}
+	if (Settings.createEnd) {
+	    endWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+	    endWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+	}
 	return gridWorld;
     }
 
@@ -297,7 +319,7 @@ public class ASkyGrid extends JavaPlugin {
 	    }
 	});
     }
-    
+
     /**
      * Start the WorldGuard protection if WG is enabled
      */
@@ -470,8 +492,12 @@ public class ASkyGrid extends JavaPlugin {
 	Settings.gridHeight = getConfig().getInt("general.gridheight", 128);
 	Settings.spawnHeight = getConfig().getInt("general.spawnheight", 128);
 	Settings.createNether = getConfig().getBoolean("general.createnether", true);
+	Settings.createEnd = getConfig().getBoolean("general.createend", true);
 	if (!Settings.createNether) {
 	    getLogger().info("The Nether is disabled");
+	}
+	if (!Settings.createEnd) {
+	    getLogger().info("The End is disabled");
 	}
 	Settings.spawnDistance = getConfig().getInt("general.distance", 1000);
 	if (Settings.spawnDistance < 1) {
@@ -575,6 +601,10 @@ public class ASkyGrid extends JavaPlugin {
 	// Enables warp signs in ASkyGrid
 	warpSignsListener = new WarpSigns(this);
 	manager.registerEvents(warpSignsListener, this);
+	// EnderDragon removal
+	if (Settings.createEnd) {
+	    manager.registerEvents(new BlockEndDragon(this), this);
+	}
     }
 
 
@@ -642,6 +672,21 @@ public class ASkyGrid extends JavaPlugin {
 	    netherWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
 	}
 	return netherWorld;
+    }
+
+    /**
+     * @return the endWorld
+     */
+    public static World getEndWorld() {
+	if (endWorld == null && Settings.createEnd) {
+	    if (plugin.getServer().getWorld(Settings.worldName + "_the_end") == null) {
+		Bukkit.getLogger().info("Creating " + plugin.getName() + "'s End...");
+	    }
+	    endWorld = WorldCreator.name(Settings.worldName + "_the_end").type(WorldType.NORMAL).environment(World.Environment.THE_END).generator(new SkyGridGen()).createWorld();
+	    endWorld.setMonsterSpawnLimit(Settings.monsterSpawnLimit);
+	    endWorld.setAnimalSpawnLimit(Settings.animalSpawnLimit);
+	}
+	return endWorld;
     }
 
     /**

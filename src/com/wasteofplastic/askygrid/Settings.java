@@ -122,4 +122,5 @@ public class Settings {
     
     
     public static boolean allowHorseInvAccess;
+    public static boolean createEnd;
 }

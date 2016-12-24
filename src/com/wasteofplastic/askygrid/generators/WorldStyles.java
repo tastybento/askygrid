@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,9 +22,9 @@ public class WorldStyles {
     private static final Map<World.Environment, WorldStyles> map = new HashMap<World.Environment, WorldStyles>(); 
 
     private final BlockProbability prob;
-    private final List<EntityType> spawns;
+    private final TreeMap<Integer,EntityType> spawns;
 
-    private WorldStyles(BlockProbability prob, List<EntityType> spawns) {
+    private WorldStyles(BlockProbability prob, TreeMap<Integer,EntityType> spawns) {
 	this.prob = prob;
 	this.spawns = spawns;
     }
@@ -31,6 +32,7 @@ public class WorldStyles {
     static {
 	map.put(World.Environment.NORMAL, new WorldStyles(normalWorldProbabilities(), normalSpawns()));
 	map.put(World.Environment.NETHER, new WorldStyles(netherWorldProbabilities(), netherSpawns()));
+	map.put(World.Environment.THE_END, new WorldStyles(endWorldProbabilities(), endSpawns()));
     }
 
     public static WorldStyles get(World.Environment style) {
@@ -49,7 +51,7 @@ public class WorldStyles {
     /**
      * @return the spawns
      */
-    public List<EntityType> getSpawns() {
+    public TreeMap<Integer,EntityType> getSpawns() {
 	return spawns;
     }
 
@@ -68,13 +70,21 @@ public class WorldStyles {
 		blockProbability.addBlock(blockMaterial, config.getInt("world.blocks." + material));
 		count++;
 	    } catch (Exception e) {
-		Bukkit.getLogger().info("Do not know what " + material + " is so skipping...");
+		Bukkit.getLogger().severe("Do not know what " + material + " is so skipping...");
 	    }
 	}
 	Bukkit.getLogger().info("Loaded " + count + " block types for ASkyGrid over world");
+	if (count == 0) {
+	    blockProbability.addBlock(Material.STONE, 100);
+	    Bukkit.getLogger().severe("Using default stone as only block (fix/update config.yml)");
+	}
 	return blockProbability;
     }
 
+    /**
+     * Nether world probabilities
+     * @return
+     */
     private static BlockProbability netherWorldProbabilities() {
 	BlockProbability blockProbability = new BlockProbability();
 	FileConfiguration config = ASkyGrid.getPlugin().getConfig();
@@ -85,10 +95,53 @@ public class WorldStyles {
 		blockProbability.addBlock(blockMaterial, config.getInt("world.netherblocks." + material));
 		count++;
 	    } catch (Exception e) {
-		Bukkit.getLogger().info("Do not know what " + material + " is so skipping...");
+		Bukkit.getLogger().severe("Do not know what " + material + " is so skipping...");
 	    }
 	}
 	Bukkit.getLogger().info("Loaded " + count + " block types for ASkyGrid nether");
+	if (count == 0) {
+	    blockProbability.addBlock(Material.NETHERRACK, 100);
+	    blockProbability.addBlock(Material.STATIONARY_LAVA, 300);
+	    blockProbability.addBlock(Material.GRAVEL, 30);
+	    blockProbability.addBlock(Material.MOB_SPAWNER, 2);
+	    blockProbability.addBlock(Material.CHEST, 1);
+	    blockProbability.addBlock(Material.SOUL_SAND, 100);
+	    blockProbability.addBlock(Material.GLOWSTONE, 1);
+	    blockProbability.addBlock(Material.NETHER_BRICK, 30);
+	    blockProbability.addBlock(Material.NETHER_FENCE, 10);
+	    blockProbability.addBlock(Material.NETHER_BRICK_STAIRS,15);
+	    blockProbability.addBlock(Material.NETHER_WARTS, 30);
+	    blockProbability.addBlock(Material.QUARTZ_ORE, 15);
+	    Bukkit.getLogger().warning("Using default nether blocks (fix/update config.yml)");
+	}
+	return blockProbability;
+    }
+    
+    /**
+     * End world probabilities
+     * @return
+     */
+    private static BlockProbability endWorldProbabilities() {
+	BlockProbability blockProbability = new BlockProbability();
+	FileConfiguration config = ASkyGrid.getPlugin().getConfig();
+	int count = 0;
+	for (String material: config.getConfigurationSection("world.endblocks").getValues(false).keySet()) {
+	    try {
+		Material blockMaterial = Material.valueOf(material.toUpperCase());
+		blockProbability.addBlock(blockMaterial, config.getInt("world.endblocks." + material));
+		count++;
+	    } catch (Exception e) {
+		Bukkit.getLogger().severe("Do not know what " + material + " is so skipping...");
+	    }
+	}
+	Bukkit.getLogger().info("Loaded " + count + " block types for ASkyGrid End");
+	if (count == 0) {
+	    blockProbability.addBlock(Material.ENDER_STONE, 300);
+	    blockProbability.addBlock(Material.OBSIDIAN, 10);
+	    blockProbability.addBlock(Material.MOB_SPAWNER, 2);
+	    blockProbability.addBlock(Material.CHEST, 1);
+	    Bukkit.getLogger().warning("Using default end settings for blocks (fix/update config.yml)");
+	}
 	return blockProbability;
     }
 
@@ -96,8 +149,9 @@ public class WorldStyles {
      * What will come out of spawners
      * @return
      */
-    private static List<EntityType> normalSpawns() {
-	List<EntityType> s = new ArrayList<EntityType>();
+    private static TreeMap<Integer,EntityType> normalSpawns() {	
+	// Use strings to enable backwards compatibility
+	TreeMap<Integer,EntityType> s = new TreeMap<Integer,EntityType>();
 	List<String> types = new ArrayList<String>();
 	types.add("CREEPER");
 	types.add("SKELETON");
@@ -120,9 +174,12 @@ public class WorldStyles {
 	types.add("WITCH");
 	types.add("LLAMA");
 	types.add("POLAR_BEAR");
+	int step = 1000 / types.size();
+	int i = step;
 	for (EntityType type: EntityType.values()) {
 	    if (types.contains(type.toString())) {
-		s.add(type);
+		s.put(i, type);
+		i += step;
 	    }
 	}
 	//Bukkit.getLogger().info("DEBUG: spawner list = " + s);
@@ -133,13 +190,32 @@ public class WorldStyles {
      * What will come out of spawners in the nether
      * @return
      */
-    private static List<EntityType> netherSpawns() {
-	List<EntityType> s = new ArrayList<EntityType>();
-	s.add(EntityType.PIG_ZOMBIE);
-	s.add(EntityType.BLAZE);
-	s.add(EntityType.MAGMA_CUBE);
-	s.add(EntityType.SKELETON);
+    private static TreeMap<Integer,EntityType> netherSpawns() {
+	TreeMap<Integer,EntityType> s = new TreeMap<Integer,EntityType>();
+	s.put(25,EntityType.BLAZE);
+	s.put(50,EntityType.MAGMA_CUBE);
+	s.put(75,EntityType.SKELETON);
+	s.put(100,EntityType.PIG_ZOMBIE);
 	//s.add(EntityType.GHAST);
+	return s;
+    }
+    
+    /**
+     * What will come out of spawners in the end
+     * @return
+     */
+    private static TreeMap<Integer,EntityType> endSpawns() {
+	TreeMap<Integer,EntityType> s = new TreeMap<Integer,EntityType>();
+	HashMap<String, Integer> types = new HashMap<String,Integer>();
+	types.put("ENDERMAN", 50);
+	types.put("ENDERMITE", 55);
+	types.put("SHULKER", 60);
+	for (EntityType type: EntityType.values()) {
+	    if (types.containsKey(type.toString())) {
+		s.put(types.get(type.toString()), type);
+	    }
+	}
+
 	return s;
     }
 

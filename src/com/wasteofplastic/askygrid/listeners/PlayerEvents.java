@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.wasteofplastic.askygrid.listeners;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,6 +36,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.wasteofplastic.askygrid.ASkyGrid;
 import com.wasteofplastic.askygrid.Settings;
@@ -45,14 +48,20 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
  */
 public class PlayerEvents implements Listener {
     private final ASkyGrid plugin;
-    private final boolean debug = false;
+    private final static boolean DEBUG = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private List<UUID> respawn;
+    private boolean spawnEggMeta = false;
 
     public PlayerEvents(final ASkyGrid plugin) {
 	this.plugin = plugin;
 	respawn = new ArrayList<UUID>();
+	// Work out if SpawnEgg method is available
+	if (getMethod("SpawnEggMeta", ItemMeta.class) != null) {
+	    spawnEggMeta = true;
+	}
+	//plugin.getLogger().info("DEBUG: spawneggmeta = " + spawnEggMeta);
     }
 
     /**
@@ -61,7 +70,7 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerRespawn(final PlayerRespawnEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!Settings.respawnAtHome) {
@@ -83,14 +92,14 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     public void onPlayerDeath(final PlayerDeathEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	if (!Settings.respawnAtHome) {
 	    return;
 	}
 	// Died in island space?
-	if (!ASkyGrid.getGridWorld().equals(e.getEntity().getWorld())) {
+	if (!inASkyGridWorld(e.getEntity().getWorld())) {
 	    return;
 	}
 	UUID playerUUID = e.getEntity().getUniqueId();
@@ -100,9 +109,9 @@ public class PlayerEvents implements Listener {
 	    respawn.add(playerUUID);
 	}
 	// Mute death messages
-        if (Settings.muteDeathMessages) {
-            e.setDeathMessage(null);
-        }
+	if (Settings.muteDeathMessages) {
+	    e.setDeathMessage(null);
+	}
     } 
 
     /*
@@ -120,7 +129,7 @@ public class PlayerEvents implements Listener {
 	 * plugin.getLogger().info(e.getEventName());
 	 * }
 	 */
-	if (!e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld())) {
+	if (!inASkyGridWorld(e.getPlayer().getWorld())) {
 	    // If the player is not in the right world, then cancel any falling flags
 	    unsetFalling(e.getPlayer().getUniqueId());
 	    return;
@@ -152,11 +161,13 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerTeleport(final PlayerCommandPreprocessEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
-	if (!e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld()) || Settings.allowTeleportWhenFalling || e.getPlayer().isOp()
-		|| !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+	if (Settings.allowTeleportWhenFalling || e.getPlayer().isOp() || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+	    return;
+	}
+	if (!inASkyGridWorld(e.getPlayer().getWorld())) {
 	    return;
 	}
 	// Check commands
@@ -170,17 +181,17 @@ public class PlayerEvents implements Listener {
     }
 
     /**
-     * Prevents teleporting when falling based on setting and teleporting to locked islands
+     * Prevents teleporting when falling based on setting
      * 
      * @param e
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
 	}
 	// We only check if the player is teleporting from an Island world and to is not null
-	if (e.getTo() == null || !e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld())) {
+	if (e.getTo() == null || !inASkyGridWorld(e.getPlayer().getWorld())) {
 	    return;
 	}
 	// Check if ready
@@ -245,14 +256,14 @@ public class PlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent e) {
-	if (debug) {
+	if (DEBUG) {
 	    plugin.getLogger().info("Player command " + e.getEventName() + ": " + e.getMessage());
 	}
 	if (e.getPlayer().isOp() || VaultHelper.checkPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bannedcommands")) {
 	    return;
 	}
 	// Check world
-	if (!e.getPlayer().getWorld().equals(ASkyGrid.getGridWorld()) && !e.getPlayer().getWorld().equals(ASkyGrid.getNetherWorld())) {
+	if (!inASkyGridWorld(e.getPlayer().getWorld())) {
 	    return;
 	}
 	// Check banned commands
@@ -262,5 +273,70 @@ public class PlayerEvents implements Listener {
 	    e.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(e.getPlayer().getUniqueId()).errorNoPermission);
 	    e.setCancelled(true);
 	}
+    }
+
+    /**
+     * Removes invalid spawn eggs
+     * @param e
+     */
+    /*
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    public void onChestOpen(final InventoryOpenEvent e) {
+	if (DEBUG) {
+	    plugin.getLogger().info("Chest open " + e.getEventName());
+	}
+	// Check world
+	if (!inASkyGridWorld(e.getPlayer().getWorld())) {
+	    return;
+	}
+
+	Inventory chestInv = e.getInventory();
+	if (chestInv.getType().equals(InventoryType.CHEST)) {
+	    if (chestInv.contains(Material.MONSTER_EGG)) {
+		for (ItemStack item: chestInv.getContents()) {
+		    if (item != null && item.getType().equals(Material.MONSTER_EGG)) {
+			if (spawnEggMeta) {
+			    SpawnEggMeta me = (SpawnEggMeta)item.getItemMeta();
+			    plugin.getLogger().info("DEBUG: monster egg me = " + me.getSpawnedType());
+			    if (me.getSpawnedType() == null) {
+				item.setType(Material.AIR);
+				//plugin.getLogger().info("DEBUG: spawn egg type meta = null");
+			    }
+			} else {
+			    @SuppressWarnings("deprecation")
+			    SpawnEgg spawnEgg = (SpawnEgg)item.getData();
+			    if (spawnEgg.getSpawnedType() == null) {
+				//item.setType(Material.DIAMOND_BLOCK);
+				//plugin.getLogger().info("DEBUG: spawn egg type = null ");
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }*/
+    private Method getMethod(String name, Class<?> clazz) {
+	for (Method m : clazz.getDeclaredMethods()) {
+	    if (m.getName().equals(name))
+		return m;
+	}
+	return null;
+    }
+    /**
+     * Checks if a world is an ASkyGrid world.
+     * @param world
+     * @return true if in an ASkyGrid world
+     */
+    private boolean inASkyGridWorld(World world) {
+	if (world.equals(ASkyGrid.getGridWorld())) {
+	    return true;
+	}
+	if (Settings.createNether && world.equals(ASkyGrid.getNetherWorld())) {
+	    return true;
+	}
+	if (Settings.createEnd && world.equals(ASkyGrid.getEndWorld())) {
+	    return true;
+	}
+	return false;
     }
 }

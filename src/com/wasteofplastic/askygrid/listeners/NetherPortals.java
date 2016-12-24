@@ -59,14 +59,10 @@ public class NetherPortals implements Listener {
 	event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerPortal(PlayerPortalEvent event) {
 	// If the nether is disabled then quit immediately
 	if (!Settings.createNether) {
-	    return;
-	}
-	if (event.isCancelled()) {
-	    // plugin.getLogger().info("PlayerPortalEvent was cancelled! ASkyGrid NOT teleporting!");
 	    return;
 	}
 	Location currentLocation = event.getFrom().clone();
@@ -79,24 +75,41 @@ public class NetherPortals implements Listener {
 	// Determine what portal it is
 	switch (event.getCause()) {
 	case END_PORTAL:
-	    // Same action for all worlds except the end itself
-	    if (!event.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
-		if (plugin.getServer().getWorld(Settings.worldName + "_the_end") != null) {
-		    // The end exists
-		    event.setCancelled(true);
-		    Location end_place = plugin.getServer().getWorld(Settings.worldName + "_the_end").getSpawnLocation();
-		    if (GridManager.isSafeLocation(end_place)) {
-			event.getPlayer().teleport(end_place);
-			return;
-		    } else {
-			event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
-			return;
+	    if (Settings.createEnd) {
+		// Same action for all worlds except the end itself
+		if (!event.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
+		    if (ASkyGrid.getEndWorld() != null) {
+			// The end exists
+			event.setCancelled(true);
+			// Convert current location to end world location
+			Location end_place = event.getPlayer().getLocation().toVector().toLocation(ASkyGrid.getEndWorld());
+			// Set the height to the top of the end grid
+			end_place.setY(Settings.gridHeight);
+			if (GridManager.isSafeLocation(end_place)) {
+			    event.getPlayer().teleport(end_place);
+			    return;
+			} else {
+			    end_place = plugin.getGrid().bigScan(end_place, 10);
+			    if (end_place != null) {
+				event.getPlayer().teleport(end_place);
+			    } else {
+				// Try the spawn
+				end_place = ASkyGrid.getEndWorld().getSpawnLocation();
+				if (GridManager.isSafeLocation(end_place)) {
+				    event.getPlayer().teleport(end_place);
+				    return;
+				} else {
+				    event.getPlayer().sendMessage(ChatColor.RED + plugin.myLocale(event.getPlayer().getUniqueId()).warpserrorNotSafe);
+				}
+			    }
+			    return;
+			}
 		    }
+		} else {
+		    // Returning from the end - just go home
+		    event.setCancelled(true);
+		    plugin.getGrid().homeTeleport(event.getPlayer());
 		}
-	    } else {
-		// Returning from the end - just go home
-		event.setCancelled(true);
-		plugin.getGrid().homeTeleport(event.getPlayer());
 	    }
 	    break;
 	case NETHER_PORTAL:
