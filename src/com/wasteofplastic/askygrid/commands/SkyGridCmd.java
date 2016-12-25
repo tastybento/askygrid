@@ -74,8 +74,9 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	final UUID playerUUID = player.getUniqueId();
 	Util.logger(2,"DEBUG: finding spawn location");
 	Random random = new Random();
-	Location next = new Location(ASkyGrid.getGridWorld(), (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance)
-		,Settings.spawnHeight, (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance));
+	long x = (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance) + Settings.spawnCenterX;
+	long z = (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance) + Settings.spawnCenterZ;
+	Location next = new Location(ASkyGrid.getGridWorld(), x, Settings.spawnHeight, z);
 	Util.logger(2,"DEBUG: found " + next);
 	// Clear any old home locations (they should be clear, but just in case)
 	plugin.getPlayers().clearHomeLocations(playerUUID);

@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -36,11 +37,12 @@ public class SkyGridPop extends BlockPopulator {
     private final static HashMap<String, Short> spawnEggData;
 
     static {
+	// Hard code these probabilities. TODO: make these config.yml settings.
 	endItems = new HashMap<String, Double>();
 	endItems.put("FIREWORK",0.2); // for elytra
 	endItems.put("EMERALD", 0.1); 
 	endItems.put("CHORUS_FRUIT", 0.2);
-	endItems.put("ELYTRA", 0.2);
+	endItems.put("ELYTRA", 0.1);
 	endItems.put("PURPLE_SHULKER_BOX", 0.2);
 
 	spawnEggData = new HashMap<String, Short>();
@@ -65,7 +67,6 @@ public class SkyGridPop extends BlockPopulator {
 	}
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void populate(World world, Random random, Chunk chunk) {
 	if (DEBUG)
@@ -205,6 +206,11 @@ public class SkyGridPop extends BlockPopulator {
 			if (b.getType().equals(Material.STAINED_GLASS)) {
 			    // Make it purple
 			    b.setData((byte)10);
+			}
+			if (b.getRelative(BlockFace.UP).getType().toString().equals("CHORUS_PLANT")) {
+			    if (DEBUG)
+				    Bukkit.getLogger().info("DEBUG Chorus Plant");
+			    world.generateTree(b.getRelative(BlockFace.UP).getLocation(), TreeType.CHORUS_PLANT);
 			}
 			// End crystal becomes hay block in the generator - leave lighting calcs crash server
 			/*
@@ -352,17 +358,14 @@ public class SkyGridPop extends BlockPopulator {
 	slt.reset();
     }
 
-    @SuppressWarnings("deprecation")
     private ItemStack itemInRange(int min, int max, Random random) {
 	return new ItemStack(random.nextInt(max - min + 1) + min, 1);
     }
 
-    @SuppressWarnings("deprecation")
     private ItemStack damageInRange(int type, int min, int max, Random random) {
 	return new ItemStack(type, 1, (short) (random.nextInt(max - min + 1) + min));
     }
 
-    @SuppressWarnings("deprecation")
     private ItemStack itemMas(int min, int max, int sm, int lg, Random random) {
 	return new ItemStack(random.nextInt(max - min + 1) + min, 
 		random.nextInt(lg - sm + 1) + sm);
@@ -373,7 +376,6 @@ public class SkyGridPop extends BlockPopulator {
      * @param entityType
      * @return A spawn egg of type entityType or AIR if not known
      */
-    @SuppressWarnings("deprecation")
     private ItemStack spawnEgg(String entityType) {
 	ItemStack egg = new ItemStack(Material.AIR);
 	try {
@@ -406,6 +408,12 @@ public class SkyGridPop extends BlockPopulator {
 	return egg;
     }
 
+    /**
+     * Helper method to find out if a method exists in a class. Used for backwards compatibility checking.
+     * @param name
+     * @param clazz
+     * @return Method or null if it does not exist
+     */
     private Method getMethod(String name, Class<?> clazz) {
 	for (Method m : clazz.getDeclaredMethods()) {
 	    if (m.getName().equals(name))

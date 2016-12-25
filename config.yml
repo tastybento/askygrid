@@ -19,7 +19,9 @@ general:
    # The probability of a frame being created in a chunk.
    endframeprobability: 0.05
 
-   # distance around 0,0 where players can spawn
+   # The center point around which players will randomly spawn x,z
+   spawncenter: 0,0
+   # distance around spawn center point where players will randomly spawn
    # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000
    distance: 1000
 
@@ -199,11 +201,11 @@ world:
    # The End blocks. END_CRYSTAL cannot be used because it causes serious performance issues
    endblocks:
      OBSIDIAN: 10
-     ENDER_STONE: 300
+     ENDER_STONE: 500
      MOB_SPAWNER: 1
      CHEST: 1
-     END_BRICKS: 20
-     CHORUS_PLANT: 5
+     END_BRICKS: 100
+     CHORUS_PLANT: 3
      STAINED_GLASS: 1
      END_ROD: 5
      PURPUR_BLOCK: 10

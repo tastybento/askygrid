@@ -124,4 +124,6 @@ public class Settings {
     public static boolean allowHorseInvAccess;
     public static boolean createEnd;
     public static double endPortalProb;
+    public static long spawnCenterX;
+    public static long spawnCenterZ;
 }

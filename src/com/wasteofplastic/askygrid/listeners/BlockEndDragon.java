@@ -1,6 +1,7 @@
 package com.wasteofplastic.askygrid.listeners;
 
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,6 +32,8 @@ public class BlockEndDragon implements Listener {
 	}
 	if (event.getEntityType().equals(EntityType.ENDER_DRAGON)) {
 	    //plugin.getLogger().info("DEBUG: removing ender dragon");
+	    LivingEntity dragon = (LivingEntity)event.getEntity();
+	    dragon.setHealth(0);
 	    event.getEntity().remove();
 	    event.setCancelled(true);
 	}

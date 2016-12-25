@@ -501,6 +501,22 @@ public class ASkyGrid extends JavaPlugin {
 	if (!Settings.createEnd) {
 	    getLogger().info("The End is disabled");
 	}
+	Settings.spawnCenterX = 0;
+	Settings.spawnCenterZ = 0;
+	String spawnCenter = getConfig().getString("general.spawncenter","0,0");
+	String[] split = spawnCenter.split(",");
+	if (!spawnCenter.contains(",") || split.length != 2) {
+	    getLogger().severe("spawncenter in config.yml must be in the format 'x,z' where x and z are numbers separated by a comma. Using 0,0.");
+	} else {
+	    try {
+		Settings.spawnCenterX = Long.valueOf(split[0]);
+		Settings.spawnCenterZ = Long.valueOf(split[1]);
+	    } catch (Exception e) {
+		getLogger().severe("spawncenter in config.yml must be in the format 'x,z' where x and z are numbers separated by a comma. Using 0,0.");
+		Settings.spawnCenterX = 0;
+		Settings.spawnCenterZ = 0;
+	    }
+	}
 	Settings.spawnDistance = getConfig().getInt("general.distance", 1000);
 	if (Settings.spawnDistance < 1) {
 	    Settings.spawnDistance = 1;

@@ -39,7 +39,10 @@ public class BlockProbability {
      */
 
     public Material getBlock(Random random, boolean bottom, boolean noLiquid) {
-	Material temp = probMap.ceilingEntry(random.nextInt(total)).getValue();
+	Material temp = probMap.get(random.nextInt(total));
+	if (temp == null) {
+	    temp = probMap.ceilingEntry(random.nextInt(total)).getValue();
+	}
 	if (temp == null) {
 	    temp = probMap.firstEntry().getValue();
 	}
