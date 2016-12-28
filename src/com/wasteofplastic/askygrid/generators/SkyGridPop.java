@@ -12,10 +12,12 @@ import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.inventory.Inventory;
@@ -39,11 +41,12 @@ public class SkyGridPop extends BlockPopulator {
     static {
 	// Hard code these probabilities. TODO: make these config.yml settings.
 	endItems = new HashMap<String, Double>();
-	endItems.put("FIREWORK",0.2); // for elytra
-	endItems.put("EMERALD", 0.1); 
-	endItems.put("CHORUS_FRUIT", 0.2);
-	endItems.put("ELYTRA", 0.1);
-	endItems.put("PURPLE_SHULKER_BOX", 0.2);
+	// double format - integer part is the quantity, decimal is the probability
+	endItems.put("FIREWORK",20.2); // for elytra
+	endItems.put("EMERALD", 1.1); 
+	endItems.put("CHORUS_FRUIT", 3.2);
+	endItems.put("ELYTRA", 1.1);
+	endItems.put("PURPLE_SHULKER_BOX", 1.2);
 
 	spawnEggData = new HashMap<String, Short>();
 	short index = 21; // The magic number
@@ -72,6 +75,7 @@ public class SkyGridPop extends BlockPopulator {
 	if (DEBUG)
 	    Bukkit.getLogger().info("DEBUG: populate chunk");
 	boolean chunkHasPortal = false;
+	int r = 0;
 	for (int x = 0; x < 16; x += 4) {
 	    for (int y = 0; y < size; y += 4) {
 		for (int z = 0; z < 16; z +=4) {
@@ -141,7 +145,77 @@ public class SkyGridPop extends BlockPopulator {
 		    case DIRT:
 			if (DEBUG)
 			    Bukkit.getLogger().info("DIRT");
-			b.setData((byte)random.nextInt(3));
+			if (b.getRelative(BlockFace.UP).getType().equals(Material.SAPLING)) {
+			    if (Settings.growTrees && random.nextBoolean()) {
+				// Get biome
+				Biome biome = b.getBiome();				
+				switch (biome) {
+				case DESERT:
+				    // never used because dirt = sand in desert
+				    b.getRelative(BlockFace.UP).setType(Material.DEAD_BUSH);
+				    break;
+				case FOREST:
+				    b.getRelative(BlockFace.UP).setType(Material.AIR);
+				    world.generateTree(b.getRelative(BlockFace.UP).getLocation(),TreeType.BIRCH);
+				    break;
+				case SWAMPLAND:
+				    b.getRelative(BlockFace.UP).setType(Material.AIR);
+				    world.generateTree(b.getRelative(BlockFace.UP).getLocation(),TreeType.SWAMP);
+				    break;
+				case EXTREME_HILLS:
+				    b.getRelative(BlockFace.UP).setType(Material.AIR);
+				    world.generateTree(b.getRelative(BlockFace.UP).getLocation(),TreeType.REDWOOD);
+				    break;
+				case SAVANNA:
+				    b.getRelative(BlockFace.UP).setType(Material.AIR);
+				    world.generateTree(b.getRelative(BlockFace.UP).getLocation(),TreeType.ACACIA);
+				    break;
+				case JUNGLE:
+				    b.getRelative(BlockFace.UP).setType(Material.AIR);
+				    //b.getRelative(BlockFace.UP).setData((byte)3);
+				    world.generateTree(b.getRelative(BlockFace.UP).getLocation(),TreeType.JUNGLE);
+				    break;
+				case PLAINS:
+				default:
+				    b.getRelative(BlockFace.UP).setType(Material.AIR);
+				    world.generateTree(b.getRelative(BlockFace.UP).getLocation(),TreeType.TREE);
+				    break;
+				}
+			    } else {
+				// Set sapling type
+				switch (b.getBiome()) {
+				case JUNGLE:
+				    b.setData((byte)3);
+				    break;
+				case PLAINS:
+				    if (random.nextBoolean()) {
+					b.setData((byte)2); // Birch
+				    }
+				    // else Oak
+				    break;
+				case TAIGA:
+				case EXTREME_HILLS:
+				    b.setData((byte)1); // spruce
+				    break;
+				case SWAMPLAND:
+				    break;
+				case DESERT:
+				case DESERT_HILLS:
+				    b.setType(Material.DEAD_BUSH);
+				    break;
+				case SAVANNA:
+				    b.setData((byte)4); // Acacia
+				    break;
+				case FOREST:
+				default:
+				    r = random.nextInt(6);
+				    b.setData((byte)r);
+				}
+			    }
+			} else if (b.getRelative(BlockFace.UP).getType().equals(Material.AIR)){
+			    // Randomize the dirt type
+			    b.setData((byte)random.nextInt(3));
+			}
 			break;
 		    case SAND:
 			if (DEBUG)
@@ -150,12 +224,46 @@ public class SkyGridPop extends BlockPopulator {
 		    case LOG:
 			if (DEBUG)
 			    Bukkit.getLogger().info("DEBUG: LOG");
-			int r = random.nextInt(6);
-			if (r < 4) {
-			    b.setData((byte)r);
+
+			if (Settings.createBiomes) {
+			    switch (b.getBiome()) {
+			    case JUNGLE:
+				b.setData((byte)3);
+				break;
+			    case PLAINS:
+				if (random.nextBoolean()) {
+				    b.setData((byte)2); // Birch
+				}
+				// else Oak
+				break;
+			    case TAIGA:
+			    case EXTREME_HILLS:
+				b.setData((byte)1); // spruce
+				break;
+			    case SWAMPLAND:
+				break;
+			    case DESERT:
+			    case DESERT_HILLS:
+				b.setType(Material.SANDSTONE);
+				r = random.nextInt(3);
+				b.setData((byte)r);
+				break;
+			    case SAVANNA:
+				b.setType(Material.LOG_2);
+				break;
+			    case FOREST:
+			    default:
+				r = random.nextInt(6);
+				b.setData((byte)r);
+			    }
 			} else {
-			    b.setType(Material.LOG_2);
-			    b.setData((byte)random.nextInt(2));
+			    r = random.nextInt(6);
+			    if (r < 4) {
+				b.setData((byte)r);
+			    } else {
+				b.setType(Material.LOG_2);
+				b.setData((byte)random.nextInt(2));
+			    }
 			}
 			break;
 		    case LEAVES:
@@ -177,18 +285,30 @@ public class SkyGridPop extends BlockPopulator {
 		    case LONG_GRASS:
 			if (DEBUG)
 			    Bukkit.getLogger().info("DEBUG: LONG grass");
-			b.getRelative(BlockFace.UP).setData((byte)random.nextInt(3));
+			if (Settings.createBiomes && b.getBiome().toString().contains("DESERT")) {
+			    b.getRelative(BlockFace.UP).setType(Material.DEAD_BUSH);
+			} else {
+			    b.getRelative(BlockFace.UP).setData((byte)random.nextInt(3));
+			}
 			break;
 		    case RED_ROSE:
 			if (DEBUG)
 			    Bukkit.getLogger().info("DEBUG: red rose");
-			b.getRelative(BlockFace.UP).setData((byte)random.nextInt(9));
+			if (Settings.createBiomes && b.getBiome().toString().contains("DESERT")) {
+			    b.getRelative(BlockFace.UP).setType(Material.DEAD_BUSH);
+			} else {
+			    b.getRelative(BlockFace.UP).setData((byte)random.nextInt(9));
+			}
 			break;
 		    case DOUBLE_PLANT:
 			if (DEBUG)
 			    Bukkit.getLogger().info("DEBUG: Double plant");
-			b.getRelative(BlockFace.UP).setData((byte)random.nextInt(6));
-			b.getRelative(BlockFace.UP).getRelative(BlockFace.UP).setData((byte)8);
+			if (Settings.createBiomes && b.getBiome().toString().contains("DESERT")) {
+			    b.getRelative(BlockFace.UP).setType(Material.DEAD_BUSH);
+			} else {
+			    b.getRelative(BlockFace.UP).setData((byte)random.nextInt(6));
+			    b.getRelative(BlockFace.UP).getRelative(BlockFace.UP).setData((byte)8);
+			}
 			break;
 		    default:
 			break;
@@ -209,7 +329,7 @@ public class SkyGridPop extends BlockPopulator {
 			}
 			if (b.getRelative(BlockFace.UP).getType().toString().equals("CHORUS_PLANT")) {
 			    if (DEBUG)
-				    Bukkit.getLogger().info("DEBUG Chorus Plant");
+				Bukkit.getLogger().info("DEBUG Chorus Plant");
 			    world.generateTree(b.getRelative(BlockFace.UP).getLocation(), TreeType.CHORUS_PLANT);
 			}
 			// End crystal becomes hay block in the generator - leave lighting calcs crash server
@@ -247,8 +367,16 @@ public class SkyGridPop extends BlockPopulator {
 	case NETHER:
 	    if (random.nextDouble() < 0.7)
 		set.add(itemInRange(256, 294, random)); //weapon/random
-	    if (random.nextDouble() < 0.7)
-		set.add(itemInRange(298, 317, random)); //armor
+	    if (random.nextDouble() < 0.7) {
+		ItemStack armor = itemInRange(298, 317, random); //armor
+		if (armor.getType().toString().endsWith("BOOTS")) {
+		    if (random.nextDouble() < 0.5) {
+			armor.addEnchantment(Enchantment.PROTECTION_FALL, random.nextInt(4) + 1);
+		    }
+		}
+		set.add(armor); //armor
+	    }
+
 	    if (random.nextDouble() < 0.9) {
 		// ghast, pigman, enderman
 		set.add(damageInRange(383, 56, 58, random)); //spawn eggs
@@ -339,8 +467,10 @@ public class SkyGridPop extends BlockPopulator {
 		set.add(itemInRange(256, 294, random)); //weapon/random
 	    for (Material mat : Material.values()) {
 		if (endItems.containsKey(mat.toString())) {
-		    if (random.nextDouble() < endItems.get(mat.toString())) {
-			set.add(new ItemStack(mat));
+		    int qty = (int)((double)endItems.get(mat.toString()));
+		    double probability = endItems.get(mat.toString()) - qty;
+		    if (random.nextDouble() < probability) {
+			set.add(new ItemStack(mat, qty));
 		    }
 		}
 	    }

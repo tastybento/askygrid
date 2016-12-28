@@ -16,7 +16,6 @@
  *******************************************************************************/
 package com.wasteofplastic.askygrid.listeners;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,12 +30,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import com.wasteofplastic.askygrid.ASkyGrid;
 import com.wasteofplastic.askygrid.Settings;
@@ -48,24 +48,26 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
  */
 public class PlayerEvents implements Listener {
     private final ASkyGrid plugin;
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private List<UUID> respawn;
-    private boolean spawnEggMeta = false;
+    //private boolean spawnEggMeta = false;
 
     public PlayerEvents(final ASkyGrid plugin) {
 	this.plugin = plugin;
 	respawn = new ArrayList<UUID>();
 	// Work out if SpawnEgg method is available
+	/*
 	if (getMethod("SpawnEggMeta", ItemMeta.class) != null) {
 	    spawnEggMeta = true;
 	}
+	 */
 	//plugin.getLogger().info("DEBUG: spawneggmeta = " + spawnEggMeta);
     }
 
     /**
-     * Places player back on their island if the setting is true
+     * Places player back at their home on the grid if the setting is true
      * @param e
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
@@ -77,17 +79,20 @@ public class PlayerEvents implements Listener {
 	    return;
 	}
 	if (respawn.contains(e.getPlayer().getUniqueId())) {
+	    if (DEBUG)
+		plugin.getLogger().info("DEBUG: found player to respawn");
 	    respawn.remove(e.getPlayer().getUniqueId());
 	    Location respawnLocation = plugin.getGrid().getSafeHomeLocation(e.getPlayer().getUniqueId(), 1);
 	    if (respawnLocation != null) {
-		//plugin.getLogger().info("DEBUG: Setting respawn location to " + respawnLocation);
+		if (DEBUG)
+		    plugin.getLogger().info("DEBUG: Setting respawn location to " + respawnLocation);
 		e.setRespawnLocation(respawnLocation);
 	    }
 	}
     }
 
     /**
-     * Places the player on the island respawn list if they are eligible
+     * Places the player on the home respawn list if they are eligible
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
@@ -100,12 +105,16 @@ public class PlayerEvents implements Listener {
 	}
 	// Died in island space?
 	if (!inASkyGridWorld(e.getEntity().getWorld())) {
+	    if (DEBUG)
+		plugin.getLogger().info("DEBUG: player did not die in ASKyGrid space");
 	    return;
 	}
 	UUID playerUUID = e.getEntity().getUniqueId();
-	// Check if player has an island
+	// Check if player has home
 	if (plugin.getPlayers().getHomeLocation(playerUUID) != null) {
 	    // Add them to the list to be respawned on their island
+	    if (DEBUG)
+		plugin.getLogger().info("DEBUG: player has a home - adding");
 	    respawn.add(playerUUID);
 	}
 	// Mute death messages
@@ -276,6 +285,31 @@ public class PlayerEvents implements Listener {
     }
 
     /**
+     * Prevents fall damage if required
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    public void onPlayerFallDamage(final EntityDamageEvent e) {
+	if (DEBUG) {
+	    plugin.getLogger().info(e.getEventName());
+	}
+	if (Settings.allowFallDamage) {
+	    return;
+	}
+	// Hurt in island space?
+	if (!inASkyGridWorld(e.getEntity().getWorld())) {
+	    return;
+	}
+	if (e.getCause() == null) {
+	    return;
+	}
+	if (e.getCause().equals(DamageCause.FALL)) {
+	    e.setCancelled(true);
+	}
+    }
+
+
+    /**
      * Removes invalid spawn eggs
      * @param e
      */
@@ -314,14 +348,15 @@ public class PlayerEvents implements Listener {
 		}
 	    }
 	}
-    }*/
+    }
     private Method getMethod(String name, Class<?> clazz) {
 	for (Method m : clazz.getDeclaredMethods()) {
 	    if (m.getName().equals(name))
 		return m;
 	}
 	return null;
-    }
+    }*/
+
     /**
      * Checks if a world is an ASkyGrid world.
      * @param world

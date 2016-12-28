@@ -1,5 +1,5 @@
 #############################################################################
-# Config for ASkyGid
+# Config for ASkyGrid ${version}
 ##############################################################################
 
 general:   
@@ -9,21 +9,31 @@ general:
    # Spawn height - height where players will spawn. Can be less than the grid height
    spawnheight: 128
 
-   # Name of the world - if it does not exist then it will be generated
+   # Name of the world - if it does not exist then it will be generated.
    worldName: ASkyGrid
-   # Create a Grid Nether - if this is false, the nether grid world will not be made
+   # Create a Grid Nether - if this is true, the nether grid world will be made.
    createnether: true
-   # Create a Grid End - if this is false, the end grid world will not be made.
-   # If true, end portal frames will be generated at the bottom of the overworld grid
+   # Create a Grid End - if this is true, the end grid world will be made.
+   # If true, end portal frames will be generated at the bottom of the overworld grid.
    createend: true
-   # The probability of a frame being created in a chunk.
+   # The probability of a frame being created in a chunk. Frames are always at y=0.
    endframeprobability: 0.05
+   
+   # Overworld has biomes - this will affect some block types and tree types.
+   biomes: true
+   # Randomly grow saplings into trees. Saplings may grow into trees.
+   growtrees: true
 
    # The center point around which players will randomly spawn x,z
-   spawncenter: 0,0
-   # distance around spawn center point where players will randomly spawn
+   spawncenter: 10000,10000
+   # Distance around spawn center point where players will randomly spawn
    # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000
+   # around the spawncenter point.
    distance: 1000
+
+   # Respawn at home after death (if home is set, otherwise randomly respawn)
+   # If false, players will respawn at the server default location or world.
+   respawnathome: true
 
    # Protection radius given when planting a Welcome Sign - requires WorldGuard.
    # This is optional. You can use other plugins to provide protection areas, like
@@ -137,8 +147,12 @@ general:
    # auto-saved to config.new.yml.
    version: ${version}
 
-# List blocks. If the material cannot be placed, bedrock will be used.
+# World block types. If the material cannot be placed, bedrock will be used.
+# Format: Material : Probability
+# Block types must be Bukkit Material types.
+# Chests have different items in them in different world types.
 world:
+   # Over world blocks. Beware of making too many chests, they can lag a lot.
    blocks:
      BOOKSHELF: 3
      BROWN_MUSHROOM: 2
@@ -173,16 +187,18 @@ world:
      REDSTONE_ORE: 8
      SAND: 20
      SANDSTONE: 10
+     SAPLING: 10
      SEA_LANTERN: 1
      SNOW_BLOCK: 8
-     STATIONARY_LAVA: 5
+     STATIONARY_LAVA: 1
      STATIONARY_WATER: 10
      STONE: 120
-     SUGAR_CANE_BLOCK: 5
+     SUGAR_CANE_BLOCK: 2
      TNT: 2
      WEB: 10
      WOOL: 25
      YELLOW_FLOWER: 2
+   # Nether block types
    netherblocks:
    # Beware with glowstone and lava - the lighting calcs will lag the
    # server badly if there are too many blocks.
@@ -197,8 +213,8 @@ world:
      NETHER_FENCE: 10
      NETHER_BRICK_STAIRS: 15
      NETHER_WARTS: 30
-     QUARTZ_ORE: 15
-   # The End blocks. END_CRYSTAL cannot be used because it causes serious performance issues
+     QUARTZ_ORE: 10
+   # The End blocks. END_CRYSTAL is blocked because it causes serious performance issues.
    endblocks:
      OBSIDIAN: 10
      ENDER_STONE: 500
@@ -212,4 +228,3 @@ world:
      PURPUR_PILLAR: 10
      PURPUR_STAIRS: 8
      PURPUR_SLAB: 10
-     

@@ -462,6 +462,12 @@ public class ASkyGrid extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("general.debug", 0);
+	// Respawn at home
+	Settings.respawnAtHome = getConfig().getBoolean("general.respawnathome", false);
+	// Grow trees
+	Settings.growTrees = getConfig().getBoolean("general.growtrees", false);
+	// Biomes
+	Settings.createBiomes = getConfig().getBoolean("general.biomes", false);
 	// End portal probability
 	Settings.endPortalProb = getConfig().getDouble("general.endframeprobability", 0.05);
 	// Banned commands
@@ -483,6 +489,7 @@ public class ASkyGrid extends JavaPlugin {
 	Settings.useControlPanel = getConfig().getBoolean("general.usecontrolpanel", false);
 	// Check if /asg command is allowed when falling
 	Settings.allowTeleportWhenFalling = getConfig().getBoolean("general.allowfallingteleport", true);
+	Settings.allowFallDamage = getConfig().getBoolean("general.allowfalldamage", true);
 	Settings.fallingCommandBlockList = getConfig().getStringList("general.blockingcommands");
 	// Max home number
 	Settings.maxHomes = getConfig().getInt("general.maxhomes",1);

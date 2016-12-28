@@ -126,4 +126,7 @@ public class Settings {
     public static double endPortalProb;
     public static long spawnCenterX;
     public static long spawnCenterZ;
+    public static boolean allowFallDamage;
+    public static boolean createBiomes;
+    public static boolean growTrees;
 }
