@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
@@ -462,6 +463,15 @@ public class ASkyGrid extends JavaPlugin {
 	}
 	// Debug
 	Settings.debug = getConfig().getInt("general.debug", 0);
+	// Warp sound
+	String sound = getConfig().getString("general.warpsound","BAT_TAKEOFF").toUpperCase();
+	for (Sound soundType : Sound.values()) {
+	    Settings.warpSound = soundType; // Prevents a null
+	    if (soundType.toString().contains(sound)) {
+		Settings.warpSound = soundType;
+		break;
+	    }
+	}
 	// Respawn at home
 	Settings.respawnAtHome = getConfig().getBoolean("general.respawnathome", false);
 	// Grow trees

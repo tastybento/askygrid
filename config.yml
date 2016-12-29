@@ -18,13 +18,13 @@ general:
    createend: true
    # The probability of a frame being created in a chunk. Frames are always at y=0.
    endframeprobability: 0.05
-   
+
    # Overworld has biomes - this will affect some block types and tree types.
    biomes: true
-   # Randomly grow saplings into trees. Saplings may grow into trees.
+   # Allow saplings to grow into trees sometimes.
    growtrees: true
 
-   # The center point around which players will randomly spawn x,z
+   # The center point around which players will randomly spawn. Format: x,z
    spawncenter: 10000,10000
    # Distance around spawn center point where players will randomly spawn
    # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000
@@ -49,7 +49,12 @@ general:
    # where # is a number greater than the default. It will only be used with the next
    # warp sign (it does not increase current protection ranges).
    protectionRange: 0
-   
+    
+   # Warp sound - for 1.8 servers, use BAT_TAKEOFF. 
+   # Latest sound options can be found at:
+   # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+   warpsound: ENTITY_BAT_TAKEOFF
+      
    # Banned commands - these commands cannot be run by players in the world
    # Bypass by Op or with the askygrid.mod.bannedcommands permission
    # The spawner command should be banned otherwise chaos will ensue!

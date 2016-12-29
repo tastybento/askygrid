@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 
 /**
@@ -129,4 +130,5 @@ public class Settings {
     public static boolean allowFallDamage;
     public static boolean createBiomes;
     public static boolean growTrees;
+    public static Sound warpSound;
 }
