@@ -464,13 +464,16 @@ public class ASkyGrid extends JavaPlugin {
 	// Debug
 	Settings.debug = getConfig().getInt("general.debug", 0);
 	// Warp sound
+	Settings.warpSound = null;
 	String sound = getConfig().getString("general.warpsound","BAT_TAKEOFF").toUpperCase();
 	for (Sound soundType : Sound.values()) {
-	    Settings.warpSound = soundType; // Prevents a null
 	    if (soundType.toString().contains(sound)) {
 		Settings.warpSound = soundType;
 		break;
 	    }
+	}
+	if (Settings.warpSound == null) {
+	    getLogger().severe("Warp sound " + sound + " is unknown. No sound will play.");
 	}
 	// Respawn at home
 	Settings.respawnAtHome = getConfig().getBoolean("general.respawnathome", false);

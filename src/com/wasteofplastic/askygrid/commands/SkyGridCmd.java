@@ -558,8 +558,8 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 				    final Location actualWarp = new Location(warpSpot.getWorld(), warpSpot.getBlockX() + 0.5D, warpSpot.getBlockY(),
 					    warpSpot.getBlockZ() + 0.5D);
 				    player.teleport(actualWarp);
-				    
-				    player.getWorld().playSound(player.getLocation(), Settings.warpSound, 1F, 1F);
+				    if (Settings.warpSound != null)
+					player.getWorld().playSound(player.getLocation(), Settings.warpSound, 1F, 1F);
 				    return true;
 				}
 			    }
@@ -586,7 +586,8 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	final Location actualWarp = new Location(inFront.getWorld(), inFront.getBlockX() + 0.5D, inFront.getBlockY(),
 		inFront.getBlockZ() + 0.5D, yaw, 30F);
 	player.teleport(actualWarp);
-	player.getWorld().playSound(player.getLocation(), Settings.warpSound, 1F, 1F);
+	if (Settings.warpSound != null)
+	    player.getWorld().playSound(player.getLocation(), Settings.warpSound, 1F, 1F);
 	Player warpOwner = plugin.getServer().getPlayer(foundWarp);
 	if (warpOwner != null && !warpOwner.equals(player)) {
 	    warpOwner.sendMessage(plugin.myLocale(foundWarp).warpsPlayerWarped.replace("[name]", player.getDisplayName()));
