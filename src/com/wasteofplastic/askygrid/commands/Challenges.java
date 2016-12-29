@@ -179,7 +179,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    return true;
 	case 2:
 	    if (cmd[0].equalsIgnoreCase("complete") || cmd[0].equalsIgnoreCase("c")) {
-		if (!player.getWorld().equals(ASkyGrid.getGridWorld())) {
+		if (!player.getWorld().toString().contains(Settings.worldName)) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).errorWrongWorld);
 		    return true;
 		}

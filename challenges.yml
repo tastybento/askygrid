@@ -260,6 +260,42 @@ challenges:
       repeatItemReward: 'REDSTONE_ORE:1 EMERALD:1'
       repeatMoneyReward: 35
       repeatExpReward: 35
+    endportal:
+      friendlyname: 'End Portal'
+      description: 'Find an End portal and activate it.'
+      icon: ENDER_PORTAL_FRAME
+      level: 'Acrobat'
+      type: collect
+      requiredItems: 'ENDER_PORTAL_FRAME:1 ENDER_PORTAL:1'
+      takeItems: false
+      itemReward: 'DIAMOND_CHESTPLATE:1 COOKED_CHICKEN:10'
+      rewardText: '1 diamond chestplate and 10 cooked chicken'
+      moneyReward: 100
+      expReward: 200
+      permissionReward: ''
+      repeatable: false
+      repeatItemReward: ''
+      repeatRewardText: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
+    flybabyfly:
+      friendlyname: '&bFly Baby Fly'
+      description: 'Find a pair of &bElytra&6 in the End'
+      level: 'Acrobat'
+      type: inventory
+      requiredItems: 'ELYTRA:1'
+      repeatable: false
+      icon: ELYTRA
+      takeItems: false
+      rewardText: "Rockets to help you go fast."
+      itemReward: 'FIREWORK:10'
+      permissionReward: ''
+      moneyReward: 70
+      expReward: 70
+      repeatRewardText: ""
+      repeatItemReward: ''
+      repeatMoneyReward: 0
+      repeatExpReward: 0
     ittakesavillage:
       friendlyname: 'Run For Mayor'
       description: 'Hold a village meeting with &610 villagers!'
