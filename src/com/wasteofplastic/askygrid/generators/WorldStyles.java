@@ -174,6 +174,15 @@ public class WorldStyles {
 	types.add("WITCH");
 	types.add("LLAMA");
 	types.add("POLAR_BEAR");
+	types.add("BAT");
+	types.add("HUSK");
+	types.add("MULE");
+	types.add("MUSHROOM_COW");
+	types.add("OCELOT");
+	types.add("VINDICATOR");
+	types.add("ZOMBIE_HORSE");
+	types.add("ZOMBIE_VILLAGER");
+
 	int step = 1000 / types.size();
 	int i = step;
 	for (EntityType type: EntityType.values()) {
@@ -192,11 +201,19 @@ public class WorldStyles {
      */
     private static TreeMap<Integer,EntityType> netherSpawns() {
 	TreeMap<Integer,EntityType> s = new TreeMap<Integer,EntityType>();
-	s.put(25,EntityType.BLAZE);
-	s.put(50,EntityType.MAGMA_CUBE);
-	s.put(75,EntityType.SKELETON);
-	s.put(100,EntityType.PIG_ZOMBIE);
-	//s.add(EntityType.GHAST);
+	HashMap<String, Integer> types = new HashMap<String,Integer>();
+	types.put("BLAZE", 25);
+	types.put("MAGMA_CUBE", 50);
+	types.put("SKELETON", 75);
+	types.put("WITHER_SKELETON", 20);
+	types.put("PIG_ZOMBIE", 75);
+	types.put("SKELETON_HORSE", 15);
+	
+	for (EntityType type: EntityType.values()) {
+	    if (types.containsKey(type.toString())) {
+		s.put(types.get(type.toString()), type);
+	    }
+	}
 	return s;
     }
     
