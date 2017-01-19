@@ -300,7 +300,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	String check = split[0];
 	if (check.equalsIgnoreCase("confirm"))
 	    check = "purge";
-	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "admin." + split[0].toLowerCase())) {
+	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "admin." + check.toLowerCase())) {
 	    return true;
 	}
 	return false;
@@ -316,7 +316,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	if (check.contains("challenge".toLowerCase())) {
 	    check = "challenges";
 	}
-	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "mod." + split[0].toLowerCase())) {
+	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "mod." + check.toLowerCase())) {
 	    return true;
 	}
 	return false;
