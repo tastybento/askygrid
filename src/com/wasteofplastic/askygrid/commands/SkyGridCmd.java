@@ -77,6 +77,19 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	long x = (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance) + Settings.spawnCenterX;
 	long z = (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance) + Settings.spawnCenterZ;
 	Location next = new Location(ASkyGrid.getGridWorld(), x, Settings.spawnHeight, z);
+	// Check world Guard
+	int tries = 0;
+	if (plugin.getWorldGuard() != null && Settings.claim_protectionRange > 0) {
+	    while (!plugin.getGguard().canBuild(player, next) && tries < 10) {
+		x = (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance) + Settings.spawnCenterX;
+		z = (random.nextInt(Settings.spawnDistance*2) - Settings.spawnDistance) + Settings.spawnCenterZ;
+		next = new Location(ASkyGrid.getGridWorld(), x, Settings.spawnHeight, z);
+		tries++;
+	    }
+	    if (tries == 10) {
+		plugin.getLogger().warning("Could not find an unclaimed spot for player to spawn. Try increasing spawn distance or move spawn center");
+	    }
+	}
 	Util.logger(2,"DEBUG: found " + next);
 	// Clear any old home locations (they should be clear, but just in case)
 	plugin.getPlayers().clearHomeLocations(playerUUID);

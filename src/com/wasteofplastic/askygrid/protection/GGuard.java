@@ -35,6 +35,20 @@ public class GGuard {
     }
 
     /**
+     * Returns true if a player can build at this location
+     * @param player
+     * @param loc
+     * @return true or false
+     */
+    public boolean canBuild(Player player, Location loc) {
+	if (loc.getWorld().equals(ASkyGrid.getGridWorld()) || (Settings.createNether && ASkyGrid.getNetherWorld() != null && loc.getWorld().equals(ASkyGrid.getNetherWorld()) ))
+	{
+	    return plugin.getWorldGuard().canBuild(player, loc);
+	}
+	return false;
+    }
+    
+    /**
      * Tries to create a WG region for player at location. Size is determined by the global size variable or
      * the player's permission node.
      * @param player

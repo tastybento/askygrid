@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
  */
 public class SafeSpotTeleport {
 
+    private static final int MAX_SEARCH_RANGE = 64;
     //private NMSAbstraction nms;
     private ASkyGrid plugin;
     /**
@@ -45,7 +46,7 @@ public class SafeSpotTeleport {
     }
 
     /**
-     * Teleport to a safe spot on an island
+     * Teleport to a safe spot
      * @param plugin
      * @param player
      * @param l
@@ -54,7 +55,7 @@ public class SafeSpotTeleport {
 	new SafeSpotTeleport(plugin, player, l, 1, "", false);
     } 
     /**
-     * Teleport to a safe spot on an island
+     * Teleport to a safe spot
 
      * @param plugin
      * @param entity
@@ -76,13 +77,20 @@ public class SafeSpotTeleport {
 		    }
 		}
 	    }
-	    // Add the rest of the island protected area
-	    for (int x = (islandLoc.getBlockX() - Settings.claim_protectionRange) /16; x <= (islandLoc.getBlockX() + Settings.claim_protectionRange)/16; x++) {
-		for (int z = (islandLoc.getBlockZ() - Settings.claim_protectionRange) /16; z <= (islandLoc.getBlockZ() + Settings.claim_protectionRange)/16; z++) {
-		    // This includes the center spots again, so is not as efficient...
-		    chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
-		}  
-	    }
+            // Add more chunks around
+	    int range = Math.min(Settings.claim_protectionRange, MAX_SEARCH_RANGE);
+            int minX = (islandLoc.getBlockX() - range) / 16;
+            int minZ = (islandLoc.getBlockZ() - range) / 16;
+            int maxX = (islandLoc.getBlockX() + range) / 16;
+            int maxZ = (islandLoc.getBlockZ() + range) / 16;
+            for (int x = minX; x <= maxX; x++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    ChunkSnapshot snap = world.getChunkAt(x, z).getChunkSnapshot();
+                    if (!chunkSnapshot.contains(snap)) {
+                        chunkSnapshot.add(snap);
+                    }
+                }
+            }
 	    //plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
 	    final List<ChunkSnapshot> finalChunk = chunkSnapshot;
 	    int maxHeight = world.getMaxHeight() - 2;
