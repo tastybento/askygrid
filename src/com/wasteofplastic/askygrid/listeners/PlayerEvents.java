@@ -48,7 +48,7 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
  */
 public class PlayerEvents implements Listener {
     private final ASkyGrid plugin;
-    private final static boolean DEBUG = true;
+    private final static boolean DEBUG = false;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private List<UUID> respawn;
