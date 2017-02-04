@@ -29,10 +29,14 @@ general:
    # Distance around spawn center point where players will randomly spawn
    # Example, 1000 will randomly spawn players between -1000,-1000 to 1000, 1000
    # around the spawncenter point.
-   distance: 1000
+   # If you are using world guard claims, make sure this is a large figure to minimize
+   # the chances of a player landing in a claimed spot. The plugin will try to avoid that
+   # but it may be impossible.
+   distance: 10000
 
-   # Respawn at home after death (if home is set, otherwise randomly respawn)
+   # Respawn at home after death.
    # If false, players will respawn at the server default location or world.
+   # This may get overriden by other plugins.
    respawnathome: true
 
    # Protection radius given when planting a Welcome Sign - requires WorldGuard.

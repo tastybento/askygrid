@@ -48,7 +48,7 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
  */
 public class PlayerEvents implements Listener {
     private final ASkyGrid plugin;
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
     // A set of falling players
     private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
     private List<UUID> respawn;
@@ -70,7 +70,7 @@ public class PlayerEvents implements Listener {
      * Places player back at their home on the grid if the setting is true
      * @param e
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRespawn(final PlayerRespawnEvent e) {
 	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
@@ -95,7 +95,7 @@ public class PlayerEvents implements Listener {
      * Places the player on the home respawn list if they are eligible
      * @param e
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDeath(final PlayerDeathEvent e) {
 	if (DEBUG) {
 	    plugin.getLogger().info(e.getEventName());
